@@ -22,6 +22,6 @@ installed, then it silently returns NULL. If the github version is newer,
 the new version number will be returned
 }
 \examples{
-url <- "https://raw.githubusercontent.com/drieslab/GiottoData/master/DESCRIPTION"
+url <- "https://raw.githubusercontent.com/giotto-suite/GiottoData/master/DESCRIPTION"
 new_github_ver_avail(url, 0.2)
 }
