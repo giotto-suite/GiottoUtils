@@ -5,17 +5,17 @@
 
 <!-- badges: start -->
 
-![Version](https://img.shields.io/github/r-package/v/drieslab/GiottoUtils)
+![Version](https://img.shields.io/github/r-package/v/giotto-suite/GiottoUtils)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Codecov test
-coverage](https://codecov.io/gh/drieslab/GiottoUtils/branch/dev/graph/badge.svg)](https://app.codecov.io/gh/drieslab/GiottoUtils?branch=dev)
+coverage](https://codecov.io/gh/giotto-suite/GiottoUtils/branch/dev/graph/badge.svg)](https://app.codecov.io/gh/giotto-suite/GiottoUtils?branch=dev)
 [![R CMD
-check](https://img.shields.io/github/actions/workflow/status/drieslab/GiottoUtils/staging_branch_workflow.yml?branch=staging&label=R%20CMD%20check)](https://github.com/drieslab/Giotto/actions/workflows/staging_branch_workflow.yml)
+check](https://img.shields.io/github/actions/workflow/status/giotto-suite/GiottoUtils/staging_branch_workflow.yml?branch=staging&label=R%20CMD%20check)](https://github.com/giotto-suite/Giotto/actions/workflows/staging_branch_workflow.yml)
 [![GitHub
-issues](https://img.shields.io/github/issues/drieslab/Giotto)](https://github.com/drieslab/Giotto/issues)
+issues](https://img.shields.io/github/issues/giotto-suite/Giotto)](https://github.com/giotto-suite/Giotto/issues)
 [![GitHub
-pulls](https://img.shields.io/github/issues-pr/drieslab/GiottoUtils)](https://github.com/drieslab/GiottoUtils/pulls)
+pulls](https://img.shields.io/github/issues-pr/giotto-suite/GiottoUtils)](https://github.com/giotto-suite/GiottoUtils/pulls)
 <!-- badges: end -->
 
 GiottoUtils exports functionalities that are called internally by many
@@ -31,7 +31,7 @@ You can install GiottoUtils like:
 
 ``` r
 if (!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
-pak::pak("drieslab/GiottoUtils")
+pak::pak("giotto-suite/GiottoUtils")
 ```
 
 There is also a version of GiottoUtils locked at R version 4.4.0 that
@@ -39,5 +39,5 @@ can be installed as following:
 
 ``` r
 if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
-remotes::install_github("drieslab/GiottoUtils@R4.4.0")
+remotes::install_github("giotto-suite/GiottoUtils@R4.4.0")
 ```
