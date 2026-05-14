@@ -64,9 +64,9 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Console Printing</h1>
             
-            <h4 data-toc-skip class="date">22 May 2025</h4>
+            <h4 data-toc-skip class="date">14 May 2026</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/drieslab/Giotto/blob/website/vignettes/print_formatting.Rmd" class="external-link"><code>vignettes/print_formatting.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/giotto-suite/Giotto/blob/website/vignettes/print_formatting.Rmd" class="external-link"><code>vignettes/print_formatting.Rmd</code></a></small>
       <div class="d-none name"><code>print_formatting.Rmd</code></div>
     </div>
 
@@ -106,7 +106,7 @@ after the first.<br>
 This function is wrapped by the convenient print functions detailed
 below.<br></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://drieslab.github.io/Giotto/" class="external-link">GiottoUtils</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://giotto-suite.github.io/GiottoUtils/" class="external-link">GiottoUtils</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="../reference/wrap_txt.html">wrap_txt</a></span><span class="op">(</span><span class="st">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span></span>
 <span><span class="st">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</span></span>
@@ -196,11 +196,11 @@ this can be set to a directory of choice using the
 stored within the <code>"giotto.last_logpath"</code>.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/vmsg.html">vmsg</a></span><span class="op">(</span>.v <span class="op">=</span> <span class="st">"log"</span>, <span class="st">"Write this to a logfile in tempdir"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Logging to:/tmp/RtmpUF7frL/giotto_20250522_1.txt</span></span></code></pre>
+<pre><code><span><span class="co">## Logging to:/tmp/RtmpiR6KtR/giotto_20260514_1.txt</span></span></code></pre>
 <p>To read the log items, use <code><a href="../reference/giottoReadLog.html">giottoReadLog()</a></code>.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/giottoReadLog.html">giottoReadLog</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] " (2025-05-22 07:40:39) Write this to a logfile in tempdir"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] " (2026-05-14 08:14:19) Write this to a logfile in tempdir"</span></span></code></pre>
 <p>You can start a new logfile using <code><a href="../reference/giottoNewLog.html">giottoNewLog()</a></code></p>
 </div>
 </div>
@@ -224,7 +224,8 @@ reported from.</p>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="fu">bar</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Error: [GiottoUtils] foo(1, 2):</span></span>
+<pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">## <span style="color: #BBBB00;">!</span> [GiottoUtils] foo(1, 2):</span></span>
 <span><span class="co">##  This is an error.</span></span></code></pre>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">foo</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="op">{</span></span>
@@ -232,13 +233,14 @@ reported from.</p>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="fu">bar</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Error: [GiottoUtils] bar():</span></span>
+<pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">## <span style="color: #BBBB00;">!</span> [GiottoUtils] bar():</span></span>
 <span><span class="co">##  This is an error.</span></span></code></pre>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.5.0 (2025-04-11)</span></span>
+<pre><code><span><span class="co">## R version 4.6.0 (2026-04-24)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">## Running under: Ubuntu 24.04.2 LTS</span></span>
+<span><span class="co">## Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
 <span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -257,20 +259,21 @@ reported from.</p>
 <span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">## [1] GiottoUtils_0.2.5 BiocStyle_2.36.0 </span></span>
+<span><span class="co">## [1] GiottoUtils_0.2.5 BiocStyle_2.40.0 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##  [1] cli_3.6.5           knitr_1.50          rlang_1.1.6        </span></span>
-<span><span class="co">##  [4] xfun_0.52           textshaping_1.0.1   data.table_1.17.2  </span></span>
-<span><span class="co">##  [7] gtools_3.9.5        jsonlite_2.0.0      backports_1.5.0    </span></span>
-<span><span class="co">## [10] htmltools_0.5.8.1   ragg_1.4.0          sass_0.4.10        </span></span>
-<span><span class="co">## [13] rmarkdown_2.29      evaluate_1.0.3      jquerylib_0.1.4    </span></span>
-<span><span class="co">## [16] fastmap_1.2.0       yaml_2.3.10         lifecycle_1.0.4    </span></span>
-<span><span class="co">## [19] bookdown_0.43       BiocManager_1.30.25 compiler_4.5.0     </span></span>
-<span><span class="co">## [22] fs_1.6.6            systemfonts_1.2.3   digest_0.6.37      </span></span>
-<span><span class="co">## [25] R6_2.6.1            parallel_4.5.0      magrittr_2.0.3     </span></span>
-<span><span class="co">## [28] bslib_0.9.0         checkmate_2.3.2     tools_4.5.0        </span></span>
-<span><span class="co">## [31] pkgdown_2.1.2       cachem_1.1.0        desc_1.4.3</span></span></code></pre>
+<span><span class="co">##  [1] vctrs_0.7.3         cli_3.6.6           knitr_1.51         </span></span>
+<span><span class="co">##  [4] rlang_1.2.0         xfun_0.57           textshaping_1.0.5  </span></span>
+<span><span class="co">##  [7] data.table_1.18.4   gtools_3.9.5        jsonlite_2.0.0     </span></span>
+<span><span class="co">## [10] glue_1.8.1          backports_1.5.1     htmltools_0.5.9    </span></span>
+<span><span class="co">## [13] ragg_1.5.2          sass_0.4.10         rmarkdown_2.31     </span></span>
+<span><span class="co">## [16] evaluate_1.0.5      jquerylib_0.1.4     fastmap_1.2.0      </span></span>
+<span><span class="co">## [19] yaml_2.3.12         lifecycle_1.0.5     bookdown_0.46      </span></span>
+<span><span class="co">## [22] BiocManager_1.30.27 compiler_4.6.0      fs_2.1.0           </span></span>
+<span><span class="co">## [25] systemfonts_1.3.2   digest_0.6.39       R6_2.6.1           </span></span>
+<span><span class="co">## [28] pillar_1.11.1       parallel_4.6.0      magrittr_2.0.5     </span></span>
+<span><span class="co">## [31] bslib_0.10.0        checkmate_2.3.4     tools_4.6.0        </span></span>
+<span><span class="co">## [34] pkgdown_2.2.0       cachem_1.1.0        desc_1.4.3</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -283,7 +286,7 @@ reported from.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
