@@ -173,39 +173,39 @@ suite_install <- function(
 }
 
 .mainrefs <- c(
-    GiottoUtils = "drieslab/GiottoUtils",
-    GiottoClass = "drieslab/GiottoClass",
-    GiottoVisuals = "drieslab/GiottoVisuals",
-    Giotto = "drieslab/Giotto",
-    GiottoData = "drieslab/GiottoData",
-    GiottoDB = "drieslab/GiottoDB"
+    GiottoUtils = "giotto-suite/GiottoUtils",
+    GiottoClass = "giotto-suite/GiottoClass",
+    GiottoVisuals = "giotto-suite/GiottoVisuals",
+    Giotto = "giotto-suite/Giotto",
+    GiottoData = "giotto-suite/GiottoData",
+    GiottoDB = "giotto-suite/GiottoDB"
 )
 
 .devrefs <- c(
-    GiottoUtils = "drieslab/GiottoUtils@dev",
-    GiottoClass = "drieslab/GiottoClass@dev",
-    GiottoVisuals = "drieslab/GiottoVisuals@dev",
-    Giotto = "drieslab/Giotto@suite_dev",
-    GiottoData = "drieslab/GiottoData@dev",
-    GiottoDB = "drieslab/GiottoDB@dev"
+    GiottoUtils = "giotto-suite/GiottoUtils@dev",
+    GiottoClass = "giotto-suite/GiottoClass@dev",
+    GiottoVisuals = "giotto-suite/GiottoVisuals@dev",
+    Giotto = "giotto-suite/Giotto@suite_dev",
+    GiottoData = "giotto-suite/GiottoData@dev",
+    GiottoDB = "giotto-suite/GiottoDB@dev"
 )
 
 .r440refs <- c(
-    GiottoUtils = "drieslab/GiottoUtils@R4.4.0",
-    GiottoClass = "drieslab/GiottoClass@R4.4.0",
-    GiottoVisuals = "drieslab/GiottoVisuals@R4.4.0",
-    Giotto = "drieslab/Giotto@R4.4.0",
-    GiottoData = "drieslab/GiottoData", # TODO
-    GiottoDB = "drieslab/GiottoDB" # TODO
+    GiottoUtils = "giotto-suite/GiottoUtils@R4.4.0",
+    GiottoClass = "giotto-suite/GiottoClass@R4.4.0",
+    GiottoVisuals = "giotto-suite/GiottoVisuals@R4.4.0",
+    Giotto = "giotto-suite/Giotto@R4.4.0",
+    GiottoData = "giotto-suite/GiottoData", # TODO
+    GiottoDB = "giotto-suite/GiottoDB" # TODO
 )
 
 .r410refs <- c(
-    GiottoUtils = "drieslab/GiottoUtils@R4.1.0",
-    GiottoClass = "drieslab/GiottoClass@R4.1.0",
-    GiottoVisuals = "drieslab/GiottoVisuals@R4.1.0",
-    Giotto = "drieslab/Giotto@R4.1.0",
-    GiottoData = "drieslab/GiottoData", # TODO
-    GiottoDB = "drieslab/GiottoDB" # TODO
+    GiottoUtils = "giotto-suite/GiottoUtils@R4.1.0",
+    GiottoClass = "giotto-suite/GiottoClass@R4.1.0",
+    GiottoVisuals = "giotto-suite/GiottoVisuals@R4.1.0",
+    Giotto = "giotto-suite/Giotto@R4.1.0",
+    GiottoData = "giotto-suite/GiottoData", # TODO
+    GiottoDB = "giotto-suite/GiottoDB" # TODO
 )
 
 .module_inst_order <- c(

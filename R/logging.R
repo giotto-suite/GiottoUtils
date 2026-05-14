@@ -122,7 +122,7 @@ giottoNewLog <- function(logdir) {
 #' @returns file connection
 #' @keywords internal
 .log_conn <- function(filepath = getOption("giotto.last_logpath", NULL),
-                      verbose = TRUE) {
+                    verbose = TRUE) {
     if (is.null(filepath) || !checkmate::test_file_exists(filepath)) {
         filepath <- .log_create(filepath = filepath) %>%
             normalizePath()
