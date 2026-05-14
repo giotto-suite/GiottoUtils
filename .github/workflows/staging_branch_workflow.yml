@@ -73,7 +73,7 @@ jobs:
     needs: R-CMD-check
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/drieslab/ci-giottosuite/ci-env
+      image: ghcr.io/giotto-suite/ci-giottosuite/ci-env
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -106,7 +106,7 @@ jobs:
     needs: R-CMD-check
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/drieslab/ci-giottosuite/ci-env
+      image: ghcr.io/giotto-suite/ci-giottosuite/ci-env
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}

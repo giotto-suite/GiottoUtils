@@ -12,7 +12,7 @@ jobs:
   codecov:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/drieslab/ci-giottosuite/ci-env
+      image: ghcr.io/giotto-suite/ci-giottosuite/ci-env
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -44,7 +44,7 @@ jobs:
   rcmdcheck:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/drieslab/ci-giottosuite/ci-env
+      image: ghcr.io/giotto-suite/ci-giottosuite/ci-env
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -67,7 +67,7 @@ jobs:
   bioccheck:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/drieslab/ci-giottosuite/ci-env
+      image: ghcr.io/giotto-suite/ci-giottosuite/ci-env
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -96,7 +96,7 @@ jobs:
       actions: read
       security-events: write
     container:
-      image: ghcr.io/drieslab/ci-giottosuite/ci-env
+      image: ghcr.io/giotto-suite/ci-giottosuite/ci-env
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}

@@ -21,7 +21,7 @@ check_github_suite_ver <- function(pkg = "Giotto") {
 
     current_ver <- packageVersion(pkg)
     url <- sprintf(
-        "https://raw.githubusercontent.com/drieslab/%s/DESCRIPTION", repo
+        "https://raw.githubusercontent.com/giotto-suite/%s/DESCRIPTION", repo
     )
 
     new_avail <- new_github_ver_avail(
@@ -45,7 +45,7 @@ check_github_suite_ver <- function(pkg = "Giotto") {
 #' @param url character. url to the package to check's DESCRIPTION file.
 #' @param current_ver character. Current version to check against
 #' @examples
-#' url <- "https://raw.githubusercontent.com/drieslab/GiottoData/master/DESCRIPTION"
+#' url <- "https://raw.githubusercontent.com/giotto-suite/GiottoData/master/DESCRIPTION"
 #' new_github_ver_avail(url, 0.2)
 #' @returns character. Version number
 #' @export
