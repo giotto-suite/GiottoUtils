@@ -6,7 +6,7 @@ such as commonly used imports to pretty prints.
 
 A helpful install utility for the rest of the suite modules is also
 provided. See
-[`suite_install()`](https://drieslab.github.io/GiottoUtils/reference/suite_install.md)
+[`suite_install()`](https://giotto-suite.github.io/GiottoUtils/reference/suite_install.md)
 
 ## Installation
 

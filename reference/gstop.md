@@ -1,7 +1,7 @@
 # Module-specific error message
 
 Send an error message formatted with
-[`wrap_txt()`](https://drieslab.github.io/GiottoUtils/reference/wrap_txt.md).
+[`wrap_txt()`](https://giotto-suite.github.io/GiottoUtils/reference/wrap_txt.md).
 Prepends the Giotto module from which the error was triggered. This
 function should not be used directly, but instead an internal `.gstop()`
 function should be created using this framework for each module using

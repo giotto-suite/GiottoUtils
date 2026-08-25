@@ -26,7 +26,7 @@ behavior is potentially problematic, given the context and/or inputs
 
 ## Text Formatting
 
-[`GiottoUtils::wrap_txt()`](https://drieslab.github.io/GiottoUtils/reference/wrap_txt.md)
+[`GiottoUtils::wrap_txt()`](https://giotto-suite.github.io/GiottoUtils/reference/wrap_txt.md)
 can be used to format text to wrap to to console size or 100 char by
 default - whichever is less. New lines are treated like “\n” and it also
 applies an indent to all lines after the first.  
@@ -97,11 +97,11 @@ test_fun1()
     ## hello world
 
 *GiottoUtils* v0.1.1 introduces
-[`vmsg()`](https://drieslab.github.io/GiottoUtils/reference/vmsg.md)
+[`vmsg()`](https://giotto-suite.github.io/GiottoUtils/reference/vmsg.md)
 which simplifies this to a single function without a preceding `if`
 statement. It also applies text wrapping. Note that the `verbose`
 default should be `NULL` with this implementation since
-[`vmsg()`](https://drieslab.github.io/GiottoUtils/reference/vmsg.md)
+[`vmsg()`](https://giotto-suite.github.io/GiottoUtils/reference/vmsg.md)
 checks for a default using the `"giotto.verbose"` option that can be set
 globally.
 
@@ -118,7 +118,7 @@ test_fun2()
 
 ### Debug messages
 
-[`vmsg()`](https://drieslab.github.io/GiottoUtils/reference/vmsg.md)
+[`vmsg()`](https://giotto-suite.github.io/GiottoUtils/reference/vmsg.md)
 also provides other modes of prints. For debugging purposes, it can be
 helpful to include more abstract or wordy printouts such as messages for
 every successful step. These can be included by flagging as `"debug"`
@@ -147,7 +147,7 @@ test_debug(verbose = "debug")
 
 For cases where a record of the messages would be helpful, but it would
 be preferred that nothing is actually printed to the console,
-[`vmsg()`](https://drieslab.github.io/GiottoUtils/reference/vmsg.md)
+[`vmsg()`](https://giotto-suite.github.io/GiottoUtils/reference/vmsg.md)
 also supports writing to a logfile. This can be done by passing either
 `"log"` or `"log_debug"` for the desired level of verbosity to the
 `verbose` param or `"giotto.verbose"` option.  
@@ -162,20 +162,20 @@ specific path to the logfile is stored within the
 vmsg(.v = "log", "Write this to a logfile in tempdir")
 ```
 
-    ## Logging to:/tmp/RtmpiR6KtR/giotto_20260514_1.txt
+    ## Logging to:/tmp/RtmpFLEA3J/giotto_20260825_1.txt
 
 To read the log items, use
-[`giottoReadLog()`](https://drieslab.github.io/GiottoUtils/reference/giottoReadLog.md).
+[`giottoReadLog()`](https://giotto-suite.github.io/GiottoUtils/reference/giottoReadLog.md).
 
 ``` r
 
 giottoReadLog()
 ```
 
-    ## [1] " (2026-05-14 08:14:19) Write this to a logfile in tempdir"
+    ## [1] " (2026-08-25 02:44:30) Write this to a logfile in tempdir"
 
 You can start a new logfile using
-[`giottoNewLog()`](https://drieslab.github.io/GiottoUtils/reference/giottoNewLog.md)
+[`giottoNewLog()`](https://giotto-suite.github.io/GiottoUtils/reference/giottoNewLog.md)
 
 ## Errors
 
@@ -221,7 +221,7 @@ bar()
 sessionInfo()
 ```
 
-    ## R version 4.6.0 (2026-04-24)
+    ## R version 4.6.1 (2026-06-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -246,14 +246,15 @@ sessionInfo()
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] vctrs_0.7.3         cli_3.6.6           knitr_1.51         
-    ##  [4] rlang_1.2.0         xfun_0.57           textshaping_1.0.5  
-    ##  [7] data.table_1.18.4   gtools_3.9.5        jsonlite_2.0.0     
-    ## [10] glue_1.8.1          backports_1.5.1     htmltools_0.5.9    
-    ## [13] ragg_1.5.2          sass_0.4.10         rmarkdown_2.31     
-    ## [16] evaluate_1.0.5      jquerylib_0.1.4     fastmap_1.2.0      
-    ## [19] yaml_2.3.12         lifecycle_1.0.5     bookdown_0.46      
-    ## [22] BiocManager_1.30.27 compiler_4.6.0      fs_2.1.0           
-    ## [25] systemfonts_1.3.2   digest_0.6.39       R6_2.6.1           
-    ## [28] pillar_1.11.1       parallel_4.6.0      magrittr_2.0.5     
-    ## [31] bslib_0.10.0        checkmate_2.3.4     tools_4.6.0        
-    ## [34] pkgdown_2.2.0       cachem_1.1.0        desc_1.4.3
+    ##  [4] rlang_1.3.0         xfun_0.60           otel_0.2.0         
+    ##  [7] textshaping_1.0.5   data.table_1.18.4   gtools_3.9.5       
+    ## [10] jsonlite_2.0.0      glue_1.8.1          backports_1.5.1    
+    ## [13] htmltools_0.5.9     ragg_1.5.2          sass_0.4.10        
+    ## [16] rmarkdown_2.31      evaluate_1.0.5      jquerylib_0.1.4    
+    ## [19] fastmap_1.2.0       yaml_2.3.12         lifecycle_1.0.5    
+    ## [22] bookdown_0.47       BiocManager_1.30.27 compiler_4.6.1     
+    ## [25] fs_2.1.0            systemfonts_1.3.2   digest_0.6.39      
+    ## [28] R6_2.6.1            pillar_1.11.1       parallel_4.6.1     
+    ## [31] magrittr_2.0.5      checkmate_2.3.4     bslib_0.12.0       
+    ## [34] tools_4.6.1         pkgdown_2.2.1       cachem_1.1.0       
+    ## [37] desc_1.4.3

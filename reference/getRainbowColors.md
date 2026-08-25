@@ -37,8 +37,8 @@ character vector of hexadecimal rainbow colors
 ## See also
 
 Other basic color palette functions:
-[`getDistinctColors()`](https://drieslab.github.io/GiottoUtils/reference/getDistinctColors.md),
-[`getMonochromeColors()`](https://drieslab.github.io/GiottoUtils/reference/getMonochromeColors.md)
+[`getDistinctColors()`](https://giotto-suite.github.io/GiottoUtils/reference/getDistinctColors.md),
+[`getMonochromeColors()`](https://giotto-suite.github.io/GiottoUtils/reference/getMonochromeColors.md)
 
 ## Examples
 

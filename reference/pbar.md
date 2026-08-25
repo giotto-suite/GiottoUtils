@@ -102,7 +102,7 @@ a progressr progressor function
 
 ## See also
 
-[`with_pbar()`](https://drieslab.github.io/GiottoUtils/reference/with_pbar.md)
+[`with_pbar()`](https://giotto-suite.github.io/GiottoUtils/reference/with_pbar.md)
 
 ## Examples
 

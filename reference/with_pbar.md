@@ -86,7 +86,7 @@ the result of the evaluated code
 
 ## See also
 
-[`pbar()`](https://drieslab.github.io/GiottoUtils/reference/pbar.md)
+[`pbar()`](https://giotto-suite.github.io/GiottoUtils/reference/pbar.md)
 
 ## Examples
 

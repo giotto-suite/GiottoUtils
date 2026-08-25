@@ -3,4 +3,4 @@
 ### All vignettes
 
 - [Console
-  Printing](https://drieslab.github.io/GiottoUtils/articles/print_formatting.md):
+  Printing](https://giotto-suite.github.io/GiottoUtils/articles/print_formatting.md):

@@ -40,7 +40,7 @@ vector giving the sort order of the input elements
 ## See also
 
 Other lifecycle:
-[`lifecycle_badge()`](https://drieslab.github.io/GiottoUtils/reference/lifecycle_badge.md)
+[`lifecycle_badge()`](https://giotto-suite.github.io/GiottoUtils/reference/lifecycle_badge.md)
 
 ## Examples
 

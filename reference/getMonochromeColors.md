@@ -32,8 +32,8 @@ character vector
 ## See also
 
 Other basic color palette functions:
-[`getDistinctColors()`](https://drieslab.github.io/GiottoUtils/reference/getDistinctColors.md),
-[`getRainbowColors()`](https://drieslab.github.io/GiottoUtils/reference/getRainbowColors.md)
+[`getDistinctColors()`](https://giotto-suite.github.io/GiottoUtils/reference/getDistinctColors.md),
+[`getRainbowColors()`](https://giotto-suite.github.io/GiottoUtils/reference/getRainbowColors.md)
 
 ## Examples
 
