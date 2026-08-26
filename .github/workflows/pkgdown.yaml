@@ -1,5 +1,16 @@
-# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
-# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+# Builds https://giotto-suite.github.io/GiottoUtils/
+#
+# The build itself lives in giotto-suite/.github and is shared by every package
+# site in the org, so the system-library set, the deploy invariant and the
+# concurrency group are maintained in one place rather than copied into each
+# repository. This file only says which site this is.
+#
+# Changes to the shared workflow reach this repo on its next build, since it is
+# referenced at @main.
+#
+# This site is the link target other packages resolve to for GiottoUtils
+# topics, so its reference pages must keep their URLs.
+
 name: pkgdown
 
 on:
@@ -12,45 +23,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  pkgdown:
-    runs-on: ubuntu-latest
-    # Only restrict concurrency for non-PR jobs
-    concurrency:
-      group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+  site:
+    # The reusable workflow can only narrow what the caller grants, so the
+    # write permission the gh-pages deploy needs has to be declared here.
     permissions:
       contents: write
-    steps:
-
-      - name: Checkout repo for workflow access
-        uses: actions/checkout@v3
-
-      - name: Setup pandoc
-        uses: r-lib/actions/setup-pandoc@v2
-
-      - name: Setup R environment
-        uses: r-lib/actions/setup-r@v2
-        with:
-          use-public-rspm: true
-
-      - name: Set up dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          dependencies: '"hard"' # do not use suggested dependencies
-          extra-packages: any::pkgdown, bioc::BiocStyle, local::.
-          needs: website
-
-      - name: Build site
-        run: |
-          pkgdown::build_search()
-          pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
-        shell: Rscript {0}
-
-      - name: Deploy to GitHub pages 🚀
-        if: github.event_name != 'pull_request'
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
-        with:
-          clean: false
-          branch: gh-pages
-          folder: docs
+    uses: giotto-suite/.github/.github/workflows/pkgdown-site.yaml@main
+    with:
+      mode: release
+      dependencies: '"hard"'   # do not use suggested dependencies
+      extra-packages: "any::pkgdown, bioc::BiocStyle, local::."
