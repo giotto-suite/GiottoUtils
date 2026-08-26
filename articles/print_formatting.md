@@ -162,7 +162,7 @@ specific path to the logfile is stored within the
 vmsg(.v = "log", "Write this to a logfile in tempdir")
 ```
 
-    ## Logging to:/tmp/RtmpFLEA3J/giotto_20260825_1.txt
+    ## Logging to:/tmp/RtmpEiULah/giotto_20260826_1.txt
 
 To read the log items, use
 [`giottoReadLog()`](https://giotto-suite.github.io/GiottoUtils/reference/giottoReadLog.md).
@@ -172,7 +172,7 @@ To read the log items, use
 giottoReadLog()
 ```
 
-    ## [1] " (2026-08-25 02:44:30) Write this to a logfile in tempdir"
+    ## [1] " (2026-08-26 11:28:10) Write this to a logfile in tempdir"
 
 You can start a new logfile using
 [`giottoNewLog()`](https://giotto-suite.github.io/GiottoUtils/reference/giottoNewLog.md)
@@ -247,7 +247,7 @@ sessionInfo()
     ## loaded via a namespace (and not attached):
     ##  [1] vctrs_0.7.3         cli_3.6.6           knitr_1.51         
     ##  [4] rlang_1.3.0         xfun_0.60           otel_0.2.0         
-    ##  [7] textshaping_1.0.5   data.table_1.18.4   gtools_3.9.5       
+    ##  [7] textshaping_1.0.5   data.table_1.18.6.1 gtools_3.9.5       
     ## [10] jsonlite_2.0.0      glue_1.8.1          backports_1.5.1    
     ## [13] htmltools_0.5.9     ragg_1.5.2          sass_0.4.10        
     ## [16] rmarkdown_2.31      evaluate_1.0.5      jquerylib_0.1.4    
