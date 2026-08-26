@@ -162,7 +162,7 @@ specific path to the logfile is stored within the
 vmsg(.v = "log", "Write this to a logfile in tempdir")
 ```
 
-    ## Logging to:/tmp/RtmpEiULah/giotto_20260826_1.txt
+    ## Logging to:/tmp/RtmpFHxVA7/giotto_20260826_1.txt
 
 To read the log items, use
 [`giottoReadLog()`](https://giotto-suite.github.io/GiottoUtils/reference/giottoReadLog.md).
@@ -172,7 +172,7 @@ To read the log items, use
 giottoReadLog()
 ```
 
-    ## [1] " (2026-08-26 11:28:10) Write this to a logfile in tempdir"
+    ## [1] " (2026-08-26 18:52:33) Write this to a logfile in tempdir"
 
 You can start a new logfile using
 [`giottoNewLog()`](https://giotto-suite.github.io/GiottoUtils/reference/giottoNewLog.md)
