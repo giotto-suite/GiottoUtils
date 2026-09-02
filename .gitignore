@@ -10,4 +10,5 @@ docs
 _pkgdown.yml
 codecov.yml
 pkgdown
+.github
 .positai

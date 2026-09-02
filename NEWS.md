@@ -1,3 +1,11 @@
+# GiottoUtils 0.2.6 (2026/09/02)
+
+## Enhancement
+- `"disk"` ref for `suite_install()` installs the on-disk build set (`gsource` branches + *GiottoDisk*)
+- *GiottoDisk* is now recognized as a Giotto Suite extension module
+- `suite_install()` installs *GiottoData* from its `R4.1.0` branch for the `R4.4.0` and `R4.1.0` refs. The default branch requires `R (>= 4.3.0)`, so it could not be installed under the `R4.1.0` ref at all
+
+
 # GiottoUtils 0.2.5 (2025/05/21)
 
 ## New

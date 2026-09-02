@@ -27,7 +27,7 @@ pbar(
 \item{along}{(vector; alternative) Alternative that sets
 \code{steps = length(along)}.}
 
-\item{offset, scale}{(integer; optional) scale and offset applying transform
+\item{offset, scale}{(integer; optional) scale and offset applying the transform
 \code{steps <- scale * steps + offset}.}
 
 \item{transform}{(function; optional) A function that takes the effective
