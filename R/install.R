@@ -17,7 +17,7 @@ suite_packages <- function(type = "core") {
     type <- match.arg(type, c("core", "extensions", "all"))
     suite_pkgs <- list(
         "core" = c("GiottoUtils", "GiottoClass", "GiottoVisuals", "Giotto"),
-        "extensions" = c("GiottoData", "GiottoDB")
+        "extensions" = c("GiottoData", "GiottoDB", "GiottoDisk")
     )
     switch(type,
         "core" = suite_pkgs$core,
@@ -41,8 +41,8 @@ suite_packages <- function(type = "core") {
 #' packages needed for Giotto to run.
 #' @param suite_deps logical. Whether to install any potential Giotto Suite
 #' dependency modules
-#' @param ref character. Currently one of "main", "R4.4.0", or "dev". These
-#' determine which branches to install. See details.
+#' @param ref character. Currently one of "main", "R4.4.0", "R4.1.0", "dev", or
+#' "disk". These determine which branches to install. See details.
 #' @param dry_run logical. When `TRUE`, only print the install commands instead
 #' of actually running them.
 #' @param \dots additional params to pass to `remotes::install_github()`
@@ -58,12 +58,23 @@ suite_packages <- function(type = "core") {
 #' @section ref `"dev"`:
 #' This version is ahead of the main version and also chases the latest R
 #' version.
+#' @section ref `"disk"`, `giottodisk`, or `gsource`:
+#' The on-disk build set. Installs the `gsource` branches that *GiottoDisk*
+#' builds against, and *GiottoDisk* itself from its `dev` integration branch.
+#' This is the only ref *GiottoDisk* is compatible with, so requesting
+#' *GiottoDisk* with any other ref switches to this one.\cr
+#' *GiottoData* and *GiottoDB* have no `gsource` branch and install from their
+#' default branch. Neither is part of the *GiottoDisk* dependency chain, so
+#' they are only installed when asked for by name.
 #' @returns `TRUE` if install succeeds
 #' @examples
 #' if (FALSE) {
 #'     # install core packages
 #'     suite_install()
 #'     suite_install("GiottoClass", ref = "dev")
+#'
+#'     # install the on-disk build set
+#'     suite_install("GiottoDisk", ref = "disk")
 #'
 #'     # install ONLY Giotto, ignoring module dependencies
 #'     # (i.e. GiottoVisuals, GiottoClass, etc)
@@ -80,6 +91,12 @@ suite_install <- function(
 
     ref <- .guess_ref(ref)
 
+    # GiottoDisk only builds against the disk ref
+    if ("GiottoDisk" %in% modules && !identical(ref, "disk")) {
+        vmsg("GiottoDisk requested. Switching to the \"disk\" ref")
+        ref <- "disk"
+    }
+
     # switch to R4.4.0 branch if user version low
     if (identical(ref, "main") && .rver() < "4.4.1") {
         ref <- "R4.4.0"
@@ -95,7 +112,7 @@ suite_install <- function(
 
     # handle module deps
     if (suite_deps) {
-        if ("Giotto" %in% modules) {
+        if (any(c("GiottoDisk", "Giotto") %in% modules)) {
             modules <- c(
                 "Giotto", "GiottoVisuals", "GiottoClass", "GiottoUtils", modules
             )
@@ -119,10 +136,11 @@ suite_install <- function(
     vmsg(.is_debug = TRUE, paste0(modules, collapse = "\n"), .prefix = "")
 
     # pick set of repo references
-    ref <- match.arg(ref, c("main", "dev", "R4.4.0", "R4.1.0"))
+    ref <- match.arg(ref, c("main", "dev", "disk", "R4.4.0", "R4.1.0"))
     fullrefs <- switch(ref,
         "main" = .mainrefs[modules],
         "dev" = .devrefs[modules],
+        "disk" = .diskrefs[modules],
         "R4.4.0" = .r440refs[modules],
         "R4.1.0" = .r410refs[modules]
     )
@@ -163,6 +181,8 @@ suite_install <- function(
         return("main")
     } else if (x == "dev") {
         return("dev")
+    } else if (x %in% c("disk", "giottodisk", "gsource")) {
+        return("disk")
     } else if (x %in% c("r4.4.0", "r440", "440")) {
         return("R4.4.0")
     } else if (x %in% c("r4.1.0", "r410", "410")) {
@@ -190,12 +210,24 @@ suite_install <- function(
     GiottoDB = "giotto-suite/GiottoDB@dev"
 )
 
+# on-disk build set. GiottoDisk's DESCRIPTION Remotes are authoritative for
+# which upstream branches it needs; keep these in sync with it.
+.diskrefs <- c(
+    GiottoUtils = "giotto-suite/GiottoUtils@dev",
+    GiottoClass = "giotto-suite/GiottoClass@gsource",
+    GiottoVisuals = "giotto-suite/GiottoVisuals@gsource",
+    Giotto = "giotto-suite/Giotto@gsource",
+    GiottoData = "giotto-suite/GiottoData", # no gsource branch
+    GiottoDB = "giotto-suite/GiottoDB", # no gsource branch
+    GiottoDisk = "giotto-suite/GiottoDisk@dev"
+)
+
 .r440refs <- c(
     GiottoUtils = "giotto-suite/GiottoUtils@R4.4.0",
     GiottoClass = "giotto-suite/GiottoClass@R4.4.0",
     GiottoVisuals = "giotto-suite/GiottoVisuals@R4.4.0",
     Giotto = "giotto-suite/Giotto@R4.4.0",
-    GiottoData = "giotto-suite/GiottoData", # TODO
+    GiottoData = "giotto-suite/GiottoData@R4.1.0", # only R-locked branch
     GiottoDB = "giotto-suite/GiottoDB" # TODO
 )
 
@@ -204,7 +236,7 @@ suite_install <- function(
     GiottoClass = "giotto-suite/GiottoClass@R4.1.0",
     GiottoVisuals = "giotto-suite/GiottoVisuals@R4.1.0",
     Giotto = "giotto-suite/Giotto@R4.1.0",
-    GiottoData = "giotto-suite/GiottoData", # TODO
+    GiottoData = "giotto-suite/GiottoData@R4.1.0",
     GiottoDB = "giotto-suite/GiottoDB" # TODO
 )
 
@@ -214,5 +246,6 @@ suite_install <- function(
     "GiottoData",
     "GiottoDB",
     "GiottoVisuals",
-    "Giotto"
+    "Giotto",
+    "GiottoDisk"
 )

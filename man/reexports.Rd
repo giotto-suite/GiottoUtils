@@ -33,8 +33,8 @@ jsoncars <- jsonlite::toJSON(mtcars, pretty = TRUE)
 fromJSON(jsoncars)
 }
 \seealso{
-Other lifecycle: 
-\code{\link{lifecycle_badge}()}
+Other lifecycle:
+\code{\link[=lifecycle_badge]{lifecycle_badge()}}
 }
 \concept{lifecycle}
 \keyword{internal}
@@ -43,10 +43,10 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{gtools}{\code{\link[gtools:mixedsort]{mixedorder}}, \code{\link[gtools]{mixedsort}}}
+  \item{gtools}{\code{\link[gtools:mixedorder]{mixedorder()}}, \code{\link[gtools:mixedsort]{mixedsort()}}}
 
-  \item{jsonlite}{\code{\link[jsonlite]{fromJSON}}, \code{\link[jsonlite]{read_json}}}
+  \item{jsonlite}{\code{\link[jsonlite:fromJSON]{fromJSON()}}, \code{\link[jsonlite:read_json]{read_json()}}}
 
-  \item{lifecycle}{\code{\link[lifecycle]{deprecate_soft}}, \code{\link[lifecycle:deprecate_soft]{deprecate_stop}}, \code{\link[lifecycle:deprecate_soft]{deprecate_warn}}, \code{\link[lifecycle]{deprecated}}, \code{\link[lifecycle:deprecated]{is_present}}}
+  \item{lifecycle}{\code{\link[lifecycle:deprecate_soft]{deprecate_soft()}}, \code{\link[lifecycle:deprecate_stop]{deprecate_stop()}}, \code{\link[lifecycle:deprecate_warn]{deprecate_warn()}}, \code{\link[lifecycle:deprecated]{deprecated()}}, \code{\link[lifecycle:is_present]{is_present()}}}
 }}
 

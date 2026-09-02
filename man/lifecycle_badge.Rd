@@ -26,7 +26,7 @@ lifecycle_badge()
 
 }
 \seealso{
-Other lifecycle: 
+Other lifecycle:
 \code{\link{reexports}}
 }
 \concept{lifecycle}

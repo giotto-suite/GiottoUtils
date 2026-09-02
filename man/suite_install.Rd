@@ -19,8 +19,8 @@ packages needed for Giotto to run.}
 \item{suite_deps}{logical. Whether to install any potential Giotto Suite
 dependency modules}
 
-\item{ref}{character. Currently one of "main", "R4.4.0", or "dev". These
-determine which branches to install. See details.}
+\item{ref}{character. Currently one of "main", "R4.4.0", "R4.1.0", "dev", or
+"disk". These determine which branches to install. See details.}
 
 \item{dry_run}{logical. When \code{TRUE}, only print the install commands instead
 of actually running them.}
@@ -64,11 +64,25 @@ This version is ahead of the main version and also chases the latest R
 version.
 }
 
+\section{ref \code{"disk"}, \code{giottodisk}, or \code{gsource}}{
+
+The on-disk build set. Installs the \code{gsource} branches that \emph{GiottoDisk}
+builds against, and \emph{GiottoDisk} itself from its \code{dev} integration branch.
+This is the only ref \emph{GiottoDisk} is compatible with, so requesting
+\emph{GiottoDisk} with any other ref switches to this one.\cr
+\emph{GiottoData} and \emph{GiottoDB} have no \code{gsource} branch and install from their
+default branch. Neither is part of the \emph{GiottoDisk} dependency chain, so
+they are only installed when asked for by name.
+}
+
 \examples{
 if (FALSE) {
     # install core packages
     suite_install()
     suite_install("GiottoClass", ref = "dev")
+
+    # install the on-disk build set
+    suite_install("GiottoDisk", ref = "disk")
 
     # install ONLY Giotto, ignoring module dependencies
     # (i.e. GiottoVisuals, GiottoClass, etc)
