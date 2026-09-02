@@ -1,4 +1,4 @@
-# GiottoUtils 0.2.6 (TBD)
+# GiottoUtils 0.2.6 (2026/09/02)
 
 ## Enhancement
 - `"disk"` ref for `suite_install()` installs the on-disk build set (`gsource` branches + *GiottoDisk*)
