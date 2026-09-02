@@ -66,16 +66,17 @@ get_args <- function(toplevel = 2L, verbose = FALSE) {
     }
 
 
-    # function
-    # f = get(x = fname, mode = "function", pos = 'package:Giotto')
-    f <- get(x = fname, mode = "function", pos = sys.frame(-2))
+    # function value, taken off the call stack so cross-package qualified
+    # calls (`pkg::fn(...)`, `pkg:::fn(...)`) resolve correctly without
+    # requiring `library(pkg)` to be attached.
+    f <- sys.function(-toplevel)
 
     # get used arguments
     cl <- match.call(definition = f, call = cl)
     user_args <- as.list(cl)[-1]
 
     # all fun arguments
-    fun_args <- formals(fun = fname)
+    fun_args <- formals(fun = f)
     fun_args[names(user_args)] <- user_args
 
     unl_args <- unlist(fun_args)
