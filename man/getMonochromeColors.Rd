@@ -12,9 +12,16 @@ getMonochromeColors(col, n = 256L, ...)
 \item{n}{number of colors to request in monochrome palette}
 
 \item{...}{
-  Arguments passed on to \code{\link[grDevices:colorRamp]{grDevices::colorRampPalette}}
+  Arguments passed on to \code{\link[grDevices:colorRampPalette]{grDevices::colorRampPalette}}
   \describe{
-    \item{\code{}}{}
+    \item{\code{bias}}{a positive number.  Higher values give more widely spaced
+    colors at the high end.}
+    \item{\code{space}}{a character string; interpolation in RGB or \abbr{CIE} Lab
+    color spaces.}
+    \item{\code{interpolate}}{use spline or linear interpolation.}
+    \item{\code{alpha}}{logical: should alpha channel (opacity) values be
+    returned?   It is an error to give a true value if
+    \code{space} is specified.}
   }}
 }
 \value{
@@ -27,8 +34,8 @@ Create color scaling for a single color starting from black
 getMonochromeColors("green", n = 100)
 }
 \seealso{
-Other basic color palette functions: 
-\code{\link{getDistinctColors}()},
-\code{\link{getRainbowColors}()}
+Other basic color palette functions:
+\code{\link[=getDistinctColors]{getDistinctColors()}},
+\code{\link[=getRainbowColors]{getRainbowColors()}}
 }
 \concept{basic color palette functions}

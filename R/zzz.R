@@ -26,4 +26,7 @@
     init_option("giotto.verbose", TRUE)
     init_option("giotto.logdir", tempdir())
     init_option("giotto.warn_sequential", TRUE)
+    # kill switch for keep_awake()/gwith_awake(); nothing holds a
+    # sleep assertion unless one of those is called
+    init_option("giotto.prevent_sleep", TRUE)
 }

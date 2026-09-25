@@ -1,3 +1,21 @@
+# GiottoUtils 0.2.7 (2026/09/25)
+
+## New
+- `keep_awake()` and `gwith_awake()` hold a system sleep assertion during long computations (`caffeinate` on macOS, `systemd-inhibit` on Linux, no-op elsewhere). A sleep part-way through a run inflates wall-clock timings while CPU and memory counters look normal
+
+## Enhancement
+- `suite_install()` accepts `"tilework"` and `"arrow"` as modules under any ref, and adds both automatically for *GiottoDisk*
+- `install_arrow` param for `suite_install()`. *arrow* needs zstd support for 10x parquet files, and the source build from r-universe is slow, so a missing or zstd-less *arrow* errors with the install command unless `install_arrow = TRUE` (install) or `FALSE` (skip)
+
+
+# GiottoUtils 0.2.6 (2026/09/02)
+
+## Enhancement
+- `"disk"` ref for `suite_install()` installs the on-disk build set (`gsource` branches + *GiottoDisk*)
+- *GiottoDisk* is now recognized as a Giotto Suite extension module
+- `suite_install()` installs *GiottoData* from its `R4.1.0` branch for the `R4.4.0` and `R4.1.0` refs. The default branch requires `R (>= 4.3.0)`, so it could not be installed under the `R4.1.0` ref at all
+
+
 # GiottoUtils 0.2.5 (2025/05/21)
 
 ## New

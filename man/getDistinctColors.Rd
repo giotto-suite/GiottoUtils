@@ -25,8 +25,8 @@ getDistinctColors(500)
 getDistinctColors(500, seed = 1)
 }
 \seealso{
-Other basic color palette functions: 
-\code{\link{getMonochromeColors}()},
-\code{\link{getRainbowColors}()}
+Other basic color palette functions:
+\code{\link[=getMonochromeColors]{getMonochromeColors()}},
+\code{\link[=getRainbowColors]{getRainbowColors()}}
 }
 \concept{basic color palette functions}

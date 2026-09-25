@@ -12,7 +12,7 @@ boolean
 \description{
 Check for an active python environment without initialization.
 If none initialized, \code{FALSE} is returned. If an initialized environment
-is found, the env name based on \code{\link[reticulate:conda-tools]{reticulate::conda_list()}} will be returned.
+is found, the env name based on \code{\link[reticulate:conda_list]{reticulate::conda_list()}} will be returned.
 The following options will also be updated with information about the active
 environment:
 \itemize{

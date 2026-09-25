@@ -31,8 +31,8 @@ getRainbowColors(10, slim = c(0.5, 1), vlim = c(0.3, 1))
 getRainbowColors(10, slim = c(0.5, 1), vlim = c(0.3, 1), seed = 11)
 }
 \seealso{
-Other basic color palette functions: 
-\code{\link{getDistinctColors}()},
-\code{\link{getMonochromeColors}()}
+Other basic color palette functions:
+\code{\link[=getDistinctColors]{getDistinctColors()}},
+\code{\link[=getMonochromeColors]{getMonochromeColors()}}
 }
 \concept{basic color palette functions}

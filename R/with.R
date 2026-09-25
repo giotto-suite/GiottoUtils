@@ -77,6 +77,31 @@ gwith_seed <- function(seed = 1234,
     )
 }
 
+#' @describeIn with Eval while preventing the machine from sleeping
+#' @details
+#' `gwith_awake()` : holds a sleep assertion for the duration of `code`, then
+#' releases it. A system sleep part-way through a long computation inflates its
+#' wall-clock time while leaving CPU time, memory and I/O counters looking
+#' normal, so an affected measurement is indistinguishable from a slow one
+#' without this. See [keep_awake()], which this wraps, for platform support and
+#' for the `giotto.prevent_sleep` kill switch.
+#' @examples
+#' # sleep prevention ##########################
+#' \dontrun{
+#' gwith_awake({
+#'     g <- runPCA(g, feats_to_use = "hvf", ncp = 30)
+#'     g <- createNearestNetwork(g, dim_reduction_to_use = "pca")
+#' })
+#' }
+#' @export
+gwith_awake <- function(code) {
+    already <- !is.na(.awake_pid())
+    held <- keep_awake(TRUE)
+    # leave an assertion that was already in place when we were called
+    if (isTRUE(held) && !already) on.exit(keep_awake(FALSE), add = TRUE)
+    force(code)
+}
+
 # internals ####
 
 set_options <- function(new_options) {

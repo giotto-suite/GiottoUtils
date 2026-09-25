@@ -5,6 +5,7 @@
 \alias{gwith_options}
 \alias{gwith_package}
 \alias{gwith_seed}
+\alias{gwith_awake}
 \title{With utilities}
 \usage{
 gwith_options(new, code)
@@ -12,6 +13,8 @@ gwith_options(new, code)
 gwith_package(package, code, pos = 2L)
 
 gwith_seed(seed = 1234, code, ..., substitute = TRUE, envir = parent.frame())
+
+gwith_awake(code)
 }
 \arguments{
 \item{new}{new option to set and its value}
@@ -39,6 +42,13 @@ Simple \emph{with} functions. Similar to or from \pkg{withr} implementations.
 }
 \details{
 \code{gwith_seed()} : \code{...} passes to \code{set.seed()}
+
+\code{gwith_awake()} : holds a sleep assertion for the duration of \code{code}, then
+releases it. A system sleep part-way through a long computation inflates its
+wall-clock time while leaving CPU time, memory and I/O counters looking
+normal, so an affected measurement is indistinguishable from a slow one
+without this. See \code{\link[=keep_awake]{keep_awake()}}, which this wraps, for platform support and
+for the \code{giotto.prevent_sleep} kill switch.
 }
 \section{Functions}{
 \itemize{
@@ -47,6 +57,8 @@ Simple \emph{with} functions. Similar to or from \pkg{withr} implementations.
 \item \code{gwith_package()}: Eval with temporarily attached package
 
 \item \code{gwith_seed()}: Eval with temporary specifiable seed
+
+\item \code{gwith_awake()}: Eval while preventing the machine from sleeping
 
 }}
 \examples{
@@ -72,4 +84,11 @@ identical(a, b)
 # does not alter pre-existing seed
 end_seed <- .Random.seed
 identical(start_seed, end_seed)
+# sleep prevention ##########################
+\dontrun{
+gwith_awake({
+    g <- runPCA(g, feats_to_use = "hvf", ncp = 30)
+    g <- createNearestNetwork(g, dim_reduction_to_use = "pca")
+})
+}
 }
