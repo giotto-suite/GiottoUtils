@@ -160,3 +160,18 @@ test_that("gwith_awake releases afterwards but leaves a pre-existing hold", {
     gwith_awake(NULL)
     expect_equal(.awake_pid(), pid)
 })
+
+test_that("memory_budget derives from free memory or takes a limit", {
+    expect_gt(free_ram(), 0)
+    expect_equal(memory_budget(limit = "4GB"), 4 * 1024^3)
+    expect_equal(memory_budget(limit = "512 mb"), 512 * 1024^2)
+    expect_equal(memory_budget(limit = 1e9), 1e9)
+    old <- options(giotto.memory_limit = "2GB")
+    on.exit(options(old), add = TRUE)
+    expect_equal(memory_budget(), 2 * 1024^3)
+    options(giotto.memory_limit = NULL)
+    b <- memory_budget(frac = 0.1)
+    expect_gt(b, 0)
+    expect_lt(b, free_ram())
+    expect_error(memory_budget(limit = "lots"), "memory size")
+})

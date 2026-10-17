@@ -244,3 +244,87 @@ keep_awake <- function(on = TRUE) {
     }
     invisible(FALSE)
 }
+
+
+
+
+# memory ####
+
+#' @title Free memory and working-memory budget
+#' @name memory_budget
+#' @description
+#' `free_ram()` reports the memory currently available to new allocations, in
+#' bytes: free plus inactive and speculative pages on macOS, `MemAvailable` on
+#' Linux, free physical memory on Windows.
+#'
+#' `memory_budget()` is how much working memory a chunked step may use at
+#' once, such as building points from a large matrix in pieces. It is a
+#' fraction of free memory by default, so a laptop gets small chunks and a
+#' large machine larger, faster ones. `limit` sets the budget directly, above
+#' or below that.
+#' @param limit absolute budget: bytes, or a size string such as `"8GB"`
+#'   (units B, KB, MB, GB, TB, powers of 1024). Defaults to
+#'   `getOption("giotto.memory_limit")`; `NULL` derives the budget from free
+#'   memory.
+#' @param frac fraction of free memory to budget when `limit` is `NULL`.
+#'   Defaults to `getOption("giotto.memory_frac", 0.25)`.
+#' @param fallback bytes to use when free memory cannot be read.
+#' @returns numeric, bytes
+#' @examples
+#' free_ram()
+#' memory_budget()
+#' memory_budget(limit = "4GB")
+#' @export
+memory_budget <- function(limit = getOption("giotto.memory_limit"),
+    frac = getOption("giotto.memory_frac", 0.25),
+    fallback = 2 * 1024^3) {
+    if (!is.null(limit)) return(.parse_bytes(limit))
+    checkmate::assert_number(frac, lower = 0, upper = 1)
+    free <- tryCatch(free_ram(), error = function(e) NA_real_)
+    if (!isTRUE(is.finite(free)) || free <= 0) return(fallback)
+    free * frac
+}
+
+#' @rdname memory_budget
+#' @export
+free_ram <- function() {
+    sysname <- Sys.info()[["sysname"]]
+    if (sysname == "Darwin") {
+        pg <- as.numeric(system("sysctl -n hw.pagesize", intern = TRUE))
+        vm <- system("vm_stat", intern = TRUE)
+        .val <- function(pat) {
+            ln <- grep(pat, vm, value = TRUE, fixed = TRUE)[1L]
+            if (is.na(ln)) return(0)
+            as.numeric(regmatches(ln, regexpr("[0-9]+", ln))) * pg
+        }
+        .val("Pages free:") + .val("Pages inactive:") + .val("Pages speculative:")
+    } else if (sysname == "Linux") {
+        mem <- readLines("/proc/meminfo")
+        ln  <- grep("^MemAvailable", mem, value = TRUE)[1L]
+        as.numeric(regmatches(ln, regexpr("[0-9]+", ln))) * 1024
+    } else if (.Platform$OS.type == "windows") {
+        out <- system("wmic OS get FreePhysicalMemory /value",
+                      intern = TRUE, ignore.stderr = TRUE)
+        ln  <- grep("FreePhysicalMemory", out, value = TRUE)[1L]
+        as.numeric(regmatches(ln, regexpr("[0-9]+", ln))) * 1024
+    } else {
+        stop("unsupported OS")
+    }
+}
+
+# "8GB" -> bytes; numbers pass through
+.parse_bytes <- function(x) {
+    if (is.numeric(x)) {
+        checkmate::assert_number(x, lower = 1)
+        return(as.numeric(x))
+    }
+    checkmate::assert_string(x)
+    X <- toupper(x)
+    m <- regmatches(X, regexec("^\\s*([0-9.]+)\\s*([KMGT]?B?)\\s*$", X))[[1L]]
+    if (length(m) != 3L) {
+        stop("memory size must be bytes or e.g. \"8GB\", not \"", x, "\"",
+             call. = FALSE)
+    }
+    unit <- sub("B$", "", m[[3L]])
+    as.numeric(m[[2L]]) * 1024^(match(unit, c("", "K", "M", "G", "T")) - 1L)
+}

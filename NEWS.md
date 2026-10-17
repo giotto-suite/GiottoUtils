@@ -1,3 +1,8 @@
+# GiottoUtils 0.2.8
+
+## New
+- `memory_budget()` and `free_ram()`: the working memory a chunked step may use, as a fraction of free memory (`giotto.memory_frac`, default 0.25) or set directly with `limit` / `options(giotto.memory_limit = "8GB")`
+
 # GiottoUtils 0.2.7 (2026/09/25)
 
 ## New
