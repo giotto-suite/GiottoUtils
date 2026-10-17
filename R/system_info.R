@@ -328,3 +328,31 @@ free_ram <- function() {
     unit <- sub("B$", "", m[[3L]])
     as.numeric(m[[2L]]) * 1024^(match(unit, c("", "K", "M", "G", "T")) - 1L)
 }
+
+#' @title Cut items into chunks of bounded size
+#' @name chunk_ranges
+#' @description
+#' Contiguous ranges of items holding at most `max_records` records each, cut
+#' greedily in order. An item with more records than that gets a range of its
+#' own. Used with [memory_budget()] to read a large file in pieces, for
+#' example the cells or bins of a sparse matrix by their non-zero counts.
+#' @param n_per_item numeric. Records per item, in order.
+#' @param max_records numeric(1). Most records per range.
+#' @returns list of `c(first, last)` item indices
+#' @examples
+#' chunk_ranges(c(3, 4, 2, 6, 1), max_records = 7)
+#' @export
+chunk_ranges <- function(n_per_item, max_records) {
+    checkmate::assert_number(max_records, lower = 1)
+    n <- length(n_per_item)
+    if (!n) return(list())
+    cs <- c(0, cumsum(as.numeric(n_per_item))) # cs[i + 1] = records through item i
+    out <- list()
+    a <- 1L
+    while (a <= n) {
+        b <- min(n, max(a, findInterval(cs[a] + max_records, cs) - 1L))
+        out[[length(out) + 1L]] <- c(a, b)
+        a <- b + 1L
+    }
+    out
+}

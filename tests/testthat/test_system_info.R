@@ -175,3 +175,10 @@ test_that("memory_budget derives from free memory or takes a limit", {
     expect_lt(b, free_ram())
     expect_error(memory_budget(limit = "lots"), "memory size")
 })
+
+test_that("chunk_ranges cuts in order and keeps large items alone", {
+    expect_identical(chunk_ranges(c(3, 4, 2, 6, 1), 7),
+                     list(c(1L, 2L), c(3L, 3L), c(4L, 5L)))
+    expect_identical(chunk_ranges(c(10, 1), 5), list(c(1L, 1L), c(2L, 2L)))
+    expect_identical(chunk_ranges(numeric(), 5), list())
+})
