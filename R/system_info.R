@@ -263,9 +263,9 @@ keep_awake <- function(on = TRUE) {
 #' large machine larger, faster ones. `limit` sets the budget directly, above
 #' or below that.
 #' @param limit absolute budget: bytes, or a size string such as `"8GB"`
-#'   (units B, KB, MB, GB, TB, powers of 1024). Defaults to
-#'   `getOption("giotto.memory_limit")`; `NULL` derives the budget from free
-#'   memory.
+#'   (units B, KB, MB, GB, TB, powers of 1024). `NULL` (default) takes
+#'   `getOption("giotto.memory_limit")`, and when that is unset derives the
+#'   budget from free memory, so a caller can pass its own `NULL` through.
 #' @param frac fraction of free memory to budget when `limit` is `NULL`.
 #'   Defaults to `getOption("giotto.memory_frac", 0.25)`.
 #' @param fallback bytes to use when free memory cannot be read.
@@ -275,9 +275,10 @@ keep_awake <- function(on = TRUE) {
 #' memory_budget()
 #' memory_budget(limit = "4GB")
 #' @export
-memory_budget <- function(limit = getOption("giotto.memory_limit"),
+memory_budget <- function(limit = NULL,
     frac = getOption("giotto.memory_frac", 0.25),
     fallback = 2 * 1024^3) {
+    if (is.null(limit)) limit <- getOption("giotto.memory_limit")
     if (!is.null(limit)) return(.parse_bytes(limit))
     checkmate::assert_number(frac, lower = 0, upper = 1)
     free <- tryCatch(free_ram(), error = function(e) NA_real_)

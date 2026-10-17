@@ -6,7 +6,7 @@
 \title{Free memory and working-memory budget}
 \usage{
 memory_budget(
-  limit = getOption("giotto.memory_limit"),
+  limit = NULL,
   frac = getOption("giotto.memory_frac", 0.25),
   fallback = 2 * 1024^3
 )
@@ -15,9 +15,9 @@ free_ram()
 }
 \arguments{
 \item{limit}{absolute budget: bytes, or a size string such as \code{"8GB"}
-(units B, KB, MB, GB, TB, powers of 1024). Defaults to
-\code{getOption("giotto.memory_limit")}; \code{NULL} derives the budget from free
-memory.}
+(units B, KB, MB, GB, TB, powers of 1024). \code{NULL} (default) takes
+\code{getOption("giotto.memory_limit")}, and when that is unset derives the
+budget from free memory, so a caller can pass its own \code{NULL} through.}
 
 \item{frac}{fraction of free memory to budget when \code{limit} is \code{NULL}.
 Defaults to \code{getOption("giotto.memory_frac", 0.25)}.}

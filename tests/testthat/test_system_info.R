@@ -169,6 +169,7 @@ test_that("memory_budget derives from free memory or takes a limit", {
     old <- options(giotto.memory_limit = "2GB")
     on.exit(options(old), add = TRUE)
     expect_equal(memory_budget(), 2 * 1024^3)
+    expect_equal(memory_budget(limit = NULL), 2 * 1024^3) # a passed-through NULL
     options(giotto.memory_limit = NULL)
     b <- memory_budget(frac = 0.1)
     expect_gt(b, 0)
