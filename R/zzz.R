@@ -26,6 +26,9 @@
     init_option("giotto.verbose", TRUE)
     init_option("giotto.logdir", tempdir())
     init_option("giotto.warn_sequential", TRUE)
+    # fraction of free RAM that chunked and disk-backed steps size their
+    # working memory to; GiottoDisk's chunk options fall back to it
+    init_option("giotto.memory_frac", 0.25)
     # kill switch for keep_awake()/gwith_awake(); nothing holds a
     # sleep assertion unless one of those is called
     init_option("giotto.prevent_sleep", TRUE)

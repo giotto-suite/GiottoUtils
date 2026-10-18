@@ -1,3 +1,9 @@
+# GiottoUtils 0.2.8
+
+## New
+- `giotto.memory_frac` option (default 0.25): the fraction of free RAM that chunked and disk-backed steps size their working memory to. *GiottoDisk*'s chunk options fall back to it
+
+
 # GiottoUtils 0.2.7 (2026/09/25)
 
 ## New
