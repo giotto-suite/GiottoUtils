@@ -1,3 +1,13 @@
+# GiottoUtils 0.2.9 (TBD)
+
+## New
+- `package_check()` gains `on_missing` (`"error"`, `"warning"`, `"message"` or `"none"`) for what to do when a package is missing, and `once = TRUE` to show a warning or message once per session. An installed package below a requested version is reported at the same level (`"error"` still reports it as a warning)
+
+## Changes
+- `package_check()` returns `FALSE` when a package is missing and `on_missing` is not `"error"`. It returned `TRUE` before, so `if (package_check(x, optional = TRUE))` never skipped its body for a missing package
+- `package_check(optional)` is deprecated in favour of `on_missing`. `TRUE` maps to `"message"` and `FALSE` to `"error"`
+
+
 # GiottoUtils 0.2.8 (TBD)
 
 ## New
