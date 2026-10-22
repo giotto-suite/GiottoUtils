@@ -1,6 +1,6 @@
 Package: GiottoUtils
 Title: Giotto Suite Utilities
-Version: 0.2.6
+Version: 0.2.9
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
 		 role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7650-7754")),
@@ -32,8 +32,10 @@ Imports:
     magrittr,
     methods,
     progressr,
+    rlang,
     R.utils,
-    stats
+    stats,
+    tools
 Suggests:
     arrow,
     BiocParallel,
