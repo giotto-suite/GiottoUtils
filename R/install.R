@@ -220,9 +220,12 @@ suite_install <- function(
 
 # non-suite packages installable under any ref. "arrow" is not a GitHub repo
 # and is handled separately by .install_arrow_zstd()
+# tilework installs from dev until 1.0.1 is on CRAN: main lacks the tile-edge
+# fix (drieslab/tilework#5) that GiottoDisk needs. Revert to the default branch
+# after the release.
 .auxrefs <- c(
     arrow = "arrow",
-    tilework = "drieslab/tilework"
+    tilework = "drieslab/tilework@dev"
 )
 
 .mainrefs <- c(
@@ -287,10 +290,15 @@ suite_install <- function(
 
 # arrow + zstd ####
 
+.arrow_repos <- c(
+    "https://apache.r-universe.dev",
+    CRAN = "https://cloud.r-project.org"
+)
+
 .arrow_install_cmd <- paste(
     'Sys.setenv(ARROW_WITH_ZSTD = "ON")',
     'install.packages("arrow",',
-    '    repos = c("https://apache.r-universe.dev"),',
+    '    repos = c("https://apache.r-universe.dev", "https://cloud.r-project.org"),',
     '    type = "source"',
     ')',
     sep = "\n"
@@ -354,12 +362,21 @@ suite_install <- function(
         }
     }, add = TRUE)
     Sys.setenv(ARROW_WITH_ZSTD = "ON")
-    install.packages("arrow",
-        repos = c("https://apache.r-universe.dev"),
-        type = "source"
-    )
+    # arrow from r-universe, its dependencies (R6, vctrs, cpp11, ...) from CRAN.
+    # With r-universe alone they are not found in a fresh library and the build
+    # fails with only a warning.
+    install.packages("arrow", repos = .arrow_repos, type = "source")
     if (isNamespaceLoaded("arrow")) {
         vmsg("arrow was loaded before reinstalling. Restart R to use the new build")
+        return(invisible(TRUE))
+    }
+    status <- .arrow_status()
+    if (!identical(status, "ok")) {
+        stop(sprintf(paste0(
+            "[suite_install] the arrow build did not give arrow with zstd ",
+            "support (%s). See the install log above, and ",
+            "https://arrow.apache.org/docs/r/articles/install.html"
+        ), status), call. = FALSE)
     }
     invisible(TRUE)
 }

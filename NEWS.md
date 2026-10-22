@@ -1,3 +1,17 @@
+# GiottoUtils 0.2.9 (2026/10/22)
+
+## New
+- `package_check()` gains `on_missing` (`"error"`, `"warning"`, `"message"` or `"none"`) for what to do when a package is missing, and `once = TRUE` to show a warning or message once per session. An installed package below a requested version is reported at the same level (`"error"` still reports it as a warning)
+- `package_check()` accepts `repository = "r-universe:owner/package"`. The install message points at that owner's r-universe (with CRAN for dependencies), which serves binaries where an install from GitHub would compile from source
+
+## Changes
+- `package_check()` returns `FALSE` when a package is missing and `on_missing` is not `"error"`. It returned `TRUE` before, so `if (package_check(x, optional = TRUE))` never skipped its body for a missing package
+- `package_check(optional)` is deprecated in favour of `on_missing`. `TRUE` maps to `"message"` and `FALSE` to `"error"`
+- `package_check()` with several packages, one of them missing and given a version request, now reports the install instructions. It errored in `packageVersion()` instead
+- `suite_install(install_arrow = TRUE)` builds *arrow* in a fresh library. Its dependencies now come from CRAN (only r-universe was searched before, so they were not found and the build failed with a warning), and the install stops with an error if the result still lacks zstd
+- `suite_install()` installs *tilework* from its `dev` branch until tilework 1.0.1 is on CRAN. `main` lacks the tile-edge fix (drieslab/tilework#5): without it, a point or polygon on the top or right edge of the data can fall outside every tile and be dropped from a GiottoDisk store
+
+
 # GiottoUtils 0.2.7 (2026/09/25)
 
 ## New
