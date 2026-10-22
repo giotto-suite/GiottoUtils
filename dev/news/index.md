@@ -1,0 +1,370 @@
+# Changelog
+
+## GiottoUtils 0.2.9 (2026/10/22)
+
+### New
+
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/package_check.md)
+  gains `on_missing` (`"error"`, `"warning"`, `"message"` or `"none"`)
+  for what to do when a package is missing, and `once = TRUE` to show a
+  warning or message once per session. An installed package below a
+  requested version is reported at the same level (`"error"` still
+  reports it as a warning)
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/package_check.md)
+  accepts `repository = "r-universe:owner/package"`. The install message
+  points at that owner’s r-universe (with CRAN for dependencies), which
+  serves binaries where an install from GitHub would compile from source
+
+### Changes
+
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/package_check.md)
+  returns `FALSE` when a package is missing and `on_missing` is not
+  `"error"`. It returned `TRUE` before, so
+  `if (package_check(x, optional = TRUE))` never skipped its body for a
+  missing package
+- `package_check(optional)` is deprecated in favour of `on_missing`.
+  `TRUE` maps to `"message"` and `FALSE` to `"error"`
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/package_check.md)
+  with several packages, one of them missing and given a version
+  request, now reports the install instructions. It errored in
+  [`packageVersion()`](https://rdrr.io/r/utils/packageDescription.html)
+  instead
+- `suite_install(install_arrow = TRUE)` builds *arrow* in a fresh
+  library. Its dependencies now come from CRAN (only r-universe was
+  searched before, so they were not found and the build failed with a
+  warning), and the install stops with an error if the result still
+  lacks zstd
+- [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/suite_install.md)
+  installs *tilework* from its `dev` branch until tilework 1.0.1 is on
+  CRAN. `main` lacks the tile-edge fix (drieslab/tilework#5): without
+  it, a point or polygon on the top or right edge of the data can fall
+  outside every tile and be dropped from a GiottoDisk store
+
+## GiottoUtils 0.2.7 (2026/09/25)
+
+### New
+
+- [`keep_awake()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/keep_awake.md)
+  and
+  [`gwith_awake()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/with.md)
+  hold a system sleep assertion during long computations (`caffeinate`
+  on macOS, `systemd-inhibit` on Linux, no-op elsewhere). A sleep
+  part-way through a run inflates wall-clock timings while CPU and
+  memory counters look normal
+
+### Enhancement
+
+- [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/suite_install.md)
+  accepts `"tilework"` and `"arrow"` as modules under any ref, and adds
+  both automatically for *GiottoDisk*
+- `install_arrow` param for
+  [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/suite_install.md).
+  *arrow* needs zstd support for 10x parquet files, and the source build
+  from r-universe is slow, so a missing or zstd-less *arrow* errors with
+  the install command unless `install_arrow = TRUE` (install) or `FALSE`
+  (skip)
+
+## GiottoUtils 0.2.6 (2026/09/02)
+
+### Enhancement
+
+- `"disk"` ref for
+  [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/suite_install.md)
+  installs the on-disk build set (`gsource` branches + *GiottoDisk*)
+- *GiottoDisk* is now recognized as a Giotto Suite extension module
+- [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/suite_install.md)
+  installs *GiottoData* from its `R4.1.0` branch for the `R4.4.0` and
+  `R4.1.0` refs. The default branch requires `R (>= 4.3.0)`, so it could
+  not be installed under the `R4.1.0` ref at all
+
+## GiottoUtils 0.2.5 (2025/05/21)
+
+### New
+
+- [`str_reformat()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/str_convenience.md)
+  for print post-processing with
+  [`strwrap()`](https://rdrr.io/r/base/strwrap.html)
+
+### Enhancement
+
+- Improve fallbacks for
+  [`print_list()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/print_list.md)
+
+## GiottoUtils 0.2.4 (2025/05/06)
+
+### Changes
+
+- deprecate
+  [`fread_colmatch()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/read_colmatch.md)
+  in favor of
+  [`read_colmatch()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/read_colmatch.md)
+
+### New
+
+- [`str_abbreviate()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/str_abbreviate.md)
+  for shortening long strings for printing
+
+### Enhancement
+
+- More ergonomic ref selection for
+  [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/suite_install.md)
+- `R4.1.0` branch can now be used as a ref for
+  [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/suite_install.md)
+- [`read_colmatch()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/read_colmatch.md)
+  now uses {arrow} for faster .csv filtering, enhanced with automated
+  schema detection performed through
+  [`data.table::fread()`](https://rdrr.io/pkg/data.table/man/fread.html)
+- `dry_run` param for
+  [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/suite_install.md)
+  to preview install commands
+- [`vmsg()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/vmsg.md)
+  logging can now be ephemerally diverted to other files
+
+### Bug Fixes
+
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/package_check.md)
+  error when checking with a provided github repo and a version number
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/package_check.md)
+  error when checking packages with “.” characters
+
+## GiottoUtils 0.2.3 (2025/01/17)
+
+### New
+
+- [`handle_errors()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/handle_errors.md)
+  for catching errors with `call. = FALSE` to avoid console locking in
+  complex calls
+
+### Enhancement
+
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/package_check.md)
+  now supports version checks of the style
+  `repository = "pip:XXXXX>=A.B.C"` (reported as warnings)
+
+## GiottoUtils 0.2.2 (2024/12/09)
+
+### Enhancement
+
+- [`lapply_flex()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/lapply_flex.md)
+  `BiocParallel` method added.
+- warning added when sequential evaluation is used with
+  [`lapply_flex()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/lapply_flex.md).
+  Silenceable through `options("giotto.warn_sequential" = FALSE)`
+- `vlim`, `slim`, `seed` params for
+  [`getRainbowColors()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/getRainbowColors.md)
+  to allow more diverse palettes
+
+## GiottoUtils 0.2.1 (2024/11/4)
+
+### New
+
+- [`suite_packages()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/suite_packages.md)
+  for reporting the names of Giotto Suite modules
+- [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/suite_install.md)
+  for installing specific branches of Giotto Suite
+
+## GiottoUtils 0.2.0 (2024/10/26)
+
+### Breaking change
+
+- R version requirement is now 4.4.1
+
+### New
+
+- [`gwith_package()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/with.md),
+  [`gwith_options()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/with.md),
+  [`gwith_seed()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/with.md)
+  for setting temporary conditions for eval
+- [`handle_warnings()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/handle_warnings.md)
+  for graceful warning handling
+
+## GiottoUtils 0.1.12 (2024/09/27)
+
+### New
+
+- [`pbar()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/pbar.md)
+  and
+  [`with_pbar()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/with_pbar.md)
+  as progress reporting utils. These are wrappers around *progressr*
+  functionalities.
+- reexports of
+  [`fromJSON()`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
+  and
+  [`read_json()`](https://jeroen.r-universe.dev/jsonlite/reference/read_json.html)
+  from `jsonlite`.
+- [`melt_matrix()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/melt_matrix.md)
+  to emulate `reshape2::melt.matrix()` (deprecated package) for most use
+  cases in Giotto.
+
+## GiottoUtils 0.1.11 (2024/08/22)
+
+### New
+
+- [`py_active_env()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/py_active_env.md)
+  utility function for detecting any active python environment without
+  initializing
+
+### Enhancement
+
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/package_check.md)
+  now works for pip github installs
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/package_check.md)
+  now reports which conda environment is being activated and what python
+  version it is.
+
+## GiottoUtils 0.1.10 (2024/07/26)
+
+### New
+
+- [`dir_manifest()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/dir_manifest.md)
+  for creating a named `list` of files within a directory. Mostly wraps
+  [`list.files()`](https://rdrr.io/r/base/list.files.html)
+
+## GiottoUtils 0.1.9 (2024/07/12)
+
+### New
+
+- [`deprecate_param()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/deprecate_param.md)
+  utility function for streamlining code
+- [`print_list()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/print_list.md)
+  for pretty printing of list-like objects
+- [`from_scipy_sparse()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/scipy_sparse.md)
+  for conversion from scipy `csr` and `csc` to Matrix `dgCMatrix` and
+  `dgRMatrix`
+
+### Changes
+
+- newer github version checking refactored into
+  [`new_github_ver_avail()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/new_github_ver_avail.md)
+
+## GiottoUtils 0.1.8 (2024/05/22)
+
+### New
+
+- [`wrap_txtf()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/wrap_txt.md)
+  variant of
+  [`wrap_txt()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/wrap_txt.md)
+  that uses [`sprintf()`](https://rdrr.io/r/base/sprintf.html)
+  formatting
+- [`init_option()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/init_option.md)
+  for setting an option if it does not exist
+
+### Enhancement
+
+- [`dt_to_matrix()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/dt_to_matrix.md)
+  can now chunk the conversion to `Matrix` to avoid memory issues
+- [`get_args_list()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/prev_call.md)
+  now has a `keep` param that allows selection of which collected args
+  to keep
+
+## GiottoUtils 0.1.6 (2024/02/26)
+
+### New
+
+- `%null%`, `%na%`, and `%none%` infix operators for setting a default
+  value when an object is, respectively, NULL, NA, or length of 0.
+- [`local_seed()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/local_seed.md)
+  for transiently setting a seed only for the duration of a function
+
+## GiottoUtils 0.1.5 (2024/02/11)
+
+### Bug Fixes
+
+- [`str_locate2()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/str_locate2.md)
+  now works with vectorized inputs like the *stringr* counterpart
+- [`str_locate2()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/str_locate2.md)
+  no-matches now properly return `NA_integer_` instead of negative
+  values
+
+### New
+
+- [`to_scipy_sparse()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/scipy_sparse.md)
+  conversion of R matrices to scipy sparse representations
+
+## GiottoUtils 0.1.4 (2024/02/05)
+
+### Enhancement
+
+- new `seed` param for
+  [`getDistinctColors()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/getDistinctColors.md)
+  that allows the ordering of the distinct colors to be changed.
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/package_check.md)
+  now allows more than one package to be checked using repo:location
+  notation.
+
+## GiottoUtils 0.1.3
+
+### Added
+
+- Add: [`mixedsort()`](https://rdrr.io/pkg/gtools/man/mixedsort.html)
+  and [`mixedorder()`](https://rdrr.io/pkg/gtools/man/mixedsort.html)
+  from *gtools*
+
+## GiottoUtils 0.1.2 (2024/01/02)
+
+### Added
+
+- Add:
+  [`getMonochromeColors()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/getMonochromeColors.md)
+  basic color palette function. Useful for image colorization.
+
+## GiottoUtils 0.1.1 (2023/12/16)
+
+### Breaking changes
+
+- Remove checkmate reexports
+- Remove deprecated `flex_lapply()`
+- Rename `guard_against_notgiotto()` to
+  [`assert_giotto()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/g_assert.md)
+- Rename `set_row_order_dt()` to
+  [`dt_set_row_order()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/dt_set_row_order.md)
+- Rename `dcast_dt_string()` to
+  [`dt_dcast_string()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/dt_dcast_string.md)
+- Rename `sort_combine_two_DT_columns()` to
+  [`dt_sort_combine_two_columns()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/dt_sort_combine_two_columns.md)
+- Rename `DT_removeNA()` to
+  [`dt_remove_na()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/dt_remove_na.md)
+- Rename `assert_DT()` to
+  [`assert_dt()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/g_assert.md)
+
+### Added
+
+- Add
+  [`gstop()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/gstop.md)
+  as a framework for sending module specific error messages
+- Add
+  [`str_locate2()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/str_locate2.md)
+  (implementation of `stringr::str_locate()` in base R)
+- Add
+  [`str_vector()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/str_convenience.md)
+  for pretty printing a vector as a string
+- Add:
+  [`str_bracket()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/str_convenience.md),
+  [`str_parenth()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/str_convenience.md),
+  [`str_quote()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/str_convenience.md),
+  [`str_double_quote()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/str_convenience.md)
+  convenience functions
+- Move:
+  [`get_prev_fname()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/prev_call.md),
+  [`get_args()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/prev_call.md),
+  and
+  [`get_prev_call()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/prev_call.md)
+  to this package
+- Add
+  [`get_prev_call()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/prev_call.md)
+- Move basic color palettes
+  [`getDistinctColors()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/getDistinctColors.md)
+  and
+  [`getRainbowColors()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/getRainbowColors.md)
+  to this package
+- Add: *RColorBrewer* to suggests for
+  [`getDistinctColors()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/getDistinctColors.md)
+
+### Changes
+
+- improvements to
+  [`assert_giotto()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/g_assert.md)
+
+## GiottoUtils 0.1.0 (2023/11/29)
+
+Initial release
