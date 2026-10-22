@@ -83,7 +83,9 @@ new_github_ver_avail <- function(url, current_ver = NULL) {
 #' @name package_check
 #' @param pkg_name name of package
 #' @param repository where is the package (in format repo:cooltool for CRAN,
-#' Bioc, and pip repos. format repo:johndoe/cooltool for github or bitbucket)
+#' Bioc, and pip repos. format repo:johndoe/cooltool for github or bitbucket.
+#' format r-universe:johndoe/cooltool for the johndoe r-universe, which serves
+#' binaries, so prefer it over github for packages with compiled code)
 #' @param github_repo name of github repository if needed
 #' @param optional whether the package is optional. If `TRUE`, an error is
 #' thrown. If `FALSE`, a warning is sent
@@ -101,6 +103,7 @@ new_github_ver_avail <- function(url, current_ver = NULL) {
 #' \dontrun{
 #' package_check("Matrix")
 #' package_check("BiocSingular", repository = "Bioc")
+#' package_check("sedonadb", repository = "r-universe:apache/sedonadb>=0.4.0")
 #' # (only expected to work when giottoenv is loaded)
 #' package_check("leidenalg", repository = "pip:leidenalg")
 #'
@@ -213,13 +216,21 @@ package_check <- function(
     repos_dt <- merge(repos_dt, name_and_version, all.x = TRUE, by = "input")
 
     # check repos
-    repo_choices <- c("CRAN", "Bioc", "github", "bitbucket", "pip")
+    repo_choices <- c(
+        "CRAN", "Bioc", "github", "bitbucket", "pip", "r-universe"
+    )
 
     if (!all(repos_dt[, unlist(repo)] %in% repo_choices)) {
         stop(sprintf(
             "[package_check] all 'repository' input(s) must be one of\n  \'%s\'",
             paste(repo_choices, collapse = "', '")
         ))
+    }
+    # the universe is named by its owner, so there is no default to fall to
+    no_owner <- repos_dt[repo == "r-universe", !grepl("/", location)]
+    if (any(no_owner)) {
+        stop("[package_check] 'r-universe' inputs need the universe owner, ",
+            "as 'r-universe:owner/package'", call. = FALSE)
     }
 
     # check missing packages
@@ -362,6 +373,13 @@ package_check <- function(
                 location = install_dt[repo == "bitbucket", location]
             )
         )
+        # r-universe
+        inst_msg <- c(
+            inst_msg,
+            .msg_runiverse_install(
+                location = install_dt[repo == "r-universe", location]
+            )
+        )
 
         print_fun(inst_msg)
     }
@@ -389,7 +407,7 @@ package_check <- function(
 }
 
 .check_package_version <- function(name, repo) {
-    if (repo == "github") name <- gsub(".*/", "", name)
+    if (repo %in% c("github", "r-universe")) name <- gsub(".*/", "", name)
     switch(repo,
         "pip" = .py_module_version(name),
         packageVersion(name) # default
@@ -480,6 +498,19 @@ package_check <- function(
     sprintf(
         "devtools::install_bitbucket(\"%s\")\n",
         location
+    )
+}
+
+# CRAN is listed too: a universe holds only its own packages, so their
+# dependencies are not found without it in a fresh library
+.msg_runiverse_install <- function(location) {
+    if (length(location) == 0L) {
+        return(NULL)
+    }
+    sprintf(
+        "install.packages(\"%s\",\n    repos = c(\"https://%s.r-universe.dev\", \"https://cloud.r-project.org\"))\n",
+        gsub(".*/", "", location),
+        gsub("/.*", "", location)
     )
 }
 
