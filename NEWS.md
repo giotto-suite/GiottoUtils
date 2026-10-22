@@ -1,6 +1,7 @@
 # GiottoUtils 0.2.8 (TBD)
 
 ## Changes
+- `suite_install(install_arrow = TRUE)` builds *arrow* in a fresh library. Its dependencies now come from CRAN (only r-universe was searched before, so they were not found and the build failed with a warning), and the install stops with an error if the result still lacks zstd
 - `suite_install()` installs *tilework* from its `dev` branch until tilework 1.0.1 is on CRAN. `main` lacks the tile-edge fix (drieslab/tilework#5): without it, a point or polygon on the top or right edge of the data can fall outside every tile and be dropped from a GiottoDisk store
 
 
