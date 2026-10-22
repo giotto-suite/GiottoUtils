@@ -24,5 +24,5 @@ character
 ``` r
 log_write(x = "my content")
 giottoReadLog()
-#> [1] " (2026-10-22 18:31:28) my content"
+#> [1] " (2026-10-22 19:48:04) my content"
 ```
