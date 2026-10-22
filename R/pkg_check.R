@@ -87,21 +87,33 @@ new_github_ver_avail <- function(url, current_ver = NULL) {
 #' format r-universe:johndoe/cooltool for the johndoe r-universe, which serves
 #' binaries, so prefer it over github for packages with compiled code)
 #' @param github_repo name of github repository if needed
-#' @param optional whether the package is optional. If `TRUE`, an error is
-#' thrown. If `FALSE`, a warning is sent
-#' and only \code{message()} will be sent if FALSE.
+#' @param optional `r lifecycle_badge("deprecated")` use `on_missing`.
+#' `TRUE` is `on_missing = "message"`, `FALSE` is `on_missing = "error"`.
 #' @param custom_msg custom message to be sent instead of default error or
 #'  message
+#' @param on_missing character. What to do when a package is missing:
+#' `"error"` (default), `"warning"`, `"message"`, or `"none"` to report
+#' nothing. Every level but `"error"` returns `FALSE`, so the caller can
+#' fall back. An installed package below a requested version is reported at
+#' the same level, except that `"error"` reports it as a warning.
+#' @param once logical. When `TRUE`, a warning or message is shown once per
+#' session for these packages, through `rlang`'s `.frequency = "once"`.
+#' Errors are always raised.
 #' @description check if package is available and provide installation
 #' instruction if not available. pip installations can accept github links.
 #' For pip links, the `repo:link` format is always preferred especially since
 #' the link cannot be used as the python package name to check the isntallation
 #' status of.
 #' @keywords internal
-#' @returns character
+#' @returns `TRUE` invisibly when every package is installed, otherwise
+#' `FALSE` invisibly (only reachable when `on_missing` is not `"error"`)
 #' @examples
 #' \dontrun{
 #' package_check("Matrix")
+#' # use a package when it is there, fall back when it is not
+#' if (package_check("png", on_missing = "message")) png::readPNG(f)
+#' # an optional speedup, mentioned once per session
+#' package_check("GiottoKernels", on_missing = "message", once = TRUE)
 #' package_check("BiocSingular", repository = "Bioc")
 #' package_check("sedonadb", repository = "r-universe:apache/sedonadb>=0.4.0")
 #' # (only expected to work when giottoenv is loaded)
@@ -139,10 +151,27 @@ package_check <- function(
         pkg_name,
         repository = NULL,
         github_repo = NULL,
-        optional = FALSE,
-        custom_msg = NULL) {
+        optional = deprecated(),
+        custom_msg = NULL,
+        on_missing = c("error", "warning", "message", "none"),
+        once = FALSE) {
     # NSE vars
     location <- name <- operator <- repo <- version_ok <- version_req <- NULL
+
+    if (is_present(optional)) {
+        if (!missing(on_missing)) {
+            stop("[package_check] use `on_missing` only, not with `optional`",
+                call. = FALSE)
+        }
+        deprecate_soft(
+            "0.2.9", "package_check(optional)", "package_check(on_missing)"
+        )
+        checkmate::assert_logical(optional, any.missing = FALSE)
+        # a vector errors if any entry is FALSE, as before
+        on_missing <- if (all(optional)) "message" else "error"
+    }
+    on_missing <- match.arg(on_missing)
+    checkmate::assert_flag(once)
 
     # set default repo to CRAN if not supplied
     no_val <- is.null(repository)
@@ -178,11 +207,6 @@ package_check <- function(
     }
 
     checkmate::assert_character(pkg_name)
-    checkmate::assert_logical(optional)
-
-    # optional is a flag for whether error or warning is thrown.
-    # throw error if ANY optional entry is FALSE
-    is_error <- any(!optional)
 
     # treat custom_msg as a replacement for the overall error/warning message
     # protect URLs from split
@@ -263,18 +287,20 @@ package_check <- function(
     version_fail_dt <- repos_dt[(!version_ok), ]
     install_dt <- repos_dt[(missing), ]
 
-    .package_version_warning(version_fail_dt)
+    # a version shortfall never errors: the package is there and may work
+    version_level <- if (on_missing == "error") "warning" else on_missing
+    .package_version_warning(version_fail_dt, version_level, once)
 
-    .package_missing_error(install_dt, custom_msg, is_error)
+    .package_missing_error(install_dt, custom_msg, on_missing, once)
 
-    # return TRUE if .package_missing_error did not throw an error
-    return(invisible(TRUE))
+    invisible(nrow(install_dt) == 0L)
 }
 
 
 # report check results
 
-.package_version_warning <- function(version_fail_dt) {
+.package_version_warning <- function(version_fail_dt, level = "warning",
+        once = FALSE) {
     if (nrow(version_fail_dt) == 0L) {
         return(invisible())
     }
@@ -298,15 +324,16 @@ package_check <- function(
     }
 
     if (length(warn_list) > 0L) {
-        warning(paste0(warn_list, collapse = "\n"),
-            call. = FALSE,
-            immediate. = FALSE
+        .package_check_signal(paste0(warn_list, collapse = "\n"),
+            level = level, once = once,
+            id = .package_check_once_id("version", version_fail_dt$name)
         )
     }
 }
 
 
-.package_missing_error <- function(install_dt, custom_msg, is_error) {
+.package_missing_error <- function(install_dt, custom_msg,
+        level = "error", once = FALSE) {
     if (nrow(install_dt) == 0L) {
         return(invisible())
     } # return early if no installs needed
@@ -314,15 +341,11 @@ package_check <- function(
     # NSE vars
     location <- name <- repo <- NULL
 
-    # select console print function
-    print_fun <- ifelse(
-        is_error,
-        function(...) stop(..., call. = FALSE),
-        function(...) {
-            message(...)
-            return(invisible(FALSE))
-        }
-    )
+    print_fun <- function(msg) {
+        .package_check_signal(msg, level = level, once = once,
+            id = .package_check_once_id("missing", install_dt$name)
+        )
+    }
 
     # custom install msg
     if (!is.null(custom_msg)) {
@@ -383,6 +406,26 @@ package_check <- function(
 
         print_fun(inst_msg)
     }
+}
+
+
+# raise `msg` at `level`. `once` is rlang's per-session frequency, keyed by
+# `id`, so every caller that asks about the same packages shares it
+.package_check_signal <- function(msg, level, once = FALSE, id = NULL) {
+    msg <- paste0(msg, collapse = "")
+    freq <- if (isTRUE(once)) "once" else "always"
+    switch(level,
+        "error" = stop(msg, call. = FALSE),
+        "warning" = rlang::warn(msg, .frequency = freq, .frequency_id = id),
+        "message" = rlang::inform(msg, .frequency = freq, .frequency_id = id),
+        "none" = NULL
+    )
+    invisible()
+}
+
+.package_check_once_id <- function(kind, names) {
+    paste0("GiottoUtils::package_check:", kind, ":",
+        paste(sort(names), collapse = ","))
 }
 
 
