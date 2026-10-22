@@ -1,43 +1,11 @@
+# GiottoUtils website
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+This branch holds only the content of the GiottoUtils pkgdown sites:
+`_pkgdown.yml` and `pkgdown/` (favicons, the dev banner, the pre-build hook).
+The package source is checked out at build time by
+`.github/workflows/pkgdown.yaml`:
 
-# GiottoUtils <img src="man/figures/logo.png" align="right" alt="" width="160" />
+- https://giotto-suite.github.io/GiottoUtils/ documents the latest GitHub release
+- https://giotto-suite.github.io/GiottoUtils/dev/ documents the `dev` branch
 
-<!-- badges: start -->
-
-![Version](https://img.shields.io/github/r-package/v/giotto-suite/GiottoUtils)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![Codecov test
-coverage](https://codecov.io/gh/giotto-suite/GiottoUtils/branch/dev/graph/badge.svg)](https://app.codecov.io/gh/giotto-suite/GiottoUtils?branch=dev)
-[![R CMD
-check](https://img.shields.io/github/actions/workflow/status/giotto-suite/GiottoUtils/staging_branch_workflow.yml?branch=staging&label=R%20CMD%20check)](https://github.com/giotto-suite/Giotto/actions/workflows/staging_branch_workflow.yml)
-[![GitHub
-issues](https://img.shields.io/github/issues/giotto-suite/Giotto)](https://github.com/giotto-suite/Giotto/issues)
-[![GitHub
-pulls](https://img.shields.io/github/issues-pr/giotto-suite/GiottoUtils)](https://github.com/giotto-suite/GiottoUtils/pulls)
-<!-- badges: end -->
-
-GiottoUtils exports functionalities that are called internally by many
-of the other packages in the Giotto ecosystem. These range from things
-such as commonly used imports to pretty prints.
-
-A helpful install utility for the rest of the suite modules is also
-provided. See [`suite_install()`](reference/suite_install.html)
-
-## Installation
-
-You can install GiottoUtils like:
-
-``` r
-if (!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
-pak::pak("giotto-suite/GiottoUtils")
-```
-
-There is also a version of GiottoUtils locked at R version 4.4.0 that
-can be installed as following:
-
-``` r
-if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
-remotes::install_github("giotto-suite/GiottoUtils@R4.4.0")
-```
+Package changes do not need to be merged here.
