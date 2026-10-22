@@ -220,9 +220,12 @@ suite_install <- function(
 
 # non-suite packages installable under any ref. "arrow" is not a GitHub repo
 # and is handled separately by .install_arrow_zstd()
+# tilework installs from dev until 1.0.1 is on CRAN: main lacks the tile-edge
+# fix (drieslab/tilework#5) that GiottoDisk needs. Revert to the default branch
+# after the release.
 .auxrefs <- c(
     arrow = "arrow",
-    tilework = "drieslab/tilework"
+    tilework = "drieslab/tilework@dev"
 )
 
 .mainrefs <- c(

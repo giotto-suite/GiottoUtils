@@ -1,3 +1,9 @@
+# GiottoUtils 0.2.8 (TBD)
+
+## Changes
+- `suite_install()` installs *tilework* from its `dev` branch until tilework 1.0.1 is on CRAN. `main` lacks the tile-edge fix (drieslab/tilework#5): without it, a point or polygon on the top or right edge of the data can fall outside every tile and be dropped from a GiottoDisk store
+
+
 # GiottoUtils 0.2.7 (2026/09/25)
 
 ## New
