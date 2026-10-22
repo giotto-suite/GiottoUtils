@@ -1,5 +1,82 @@
 # Changelog
 
+## GiottoUtils 0.2.9 (2026/10/22)
+
+### New
+
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/reference/package_check.md)
+  gains `on_missing` (`"error"`, `"warning"`, `"message"` or `"none"`)
+  for what to do when a package is missing, and `once = TRUE` to show a
+  warning or message once per session. An installed package below a
+  requested version is reported at the same level (`"error"` still
+  reports it as a warning)
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/reference/package_check.md)
+  accepts `repository = "r-universe:owner/package"`. The install message
+  points at that owner’s r-universe (with CRAN for dependencies), which
+  serves binaries where an install from GitHub would compile from source
+
+### Changes
+
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/reference/package_check.md)
+  returns `FALSE` when a package is missing and `on_missing` is not
+  `"error"`. It returned `TRUE` before, so
+  `if (package_check(x, optional = TRUE))` never skipped its body for a
+  missing package
+- `package_check(optional)` is deprecated in favour of `on_missing`.
+  `TRUE` maps to `"message"` and `FALSE` to `"error"`
+- [`package_check()`](https://giotto-suite.github.io/GiottoUtils/reference/package_check.md)
+  with several packages, one of them missing and given a version
+  request, now reports the install instructions. It errored in
+  [`packageVersion()`](https://rdrr.io/r/utils/packageDescription.html)
+  instead
+- `suite_install(install_arrow = TRUE)` builds *arrow* in a fresh
+  library. Its dependencies now come from CRAN (only r-universe was
+  searched before, so they were not found and the build failed with a
+  warning), and the install stops with an error if the result still
+  lacks zstd
+- [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/reference/suite_install.md)
+  installs *tilework* from its `dev` branch until tilework 1.0.1 is on
+  CRAN. `main` lacks the tile-edge fix (drieslab/tilework#5): without
+  it, a point or polygon on the top or right edge of the data can fall
+  outside every tile and be dropped from a GiottoDisk store
+
+## GiottoUtils 0.2.7 (2026/09/25)
+
+### New
+
+- [`keep_awake()`](https://giotto-suite.github.io/GiottoUtils/reference/keep_awake.md)
+  and
+  [`gwith_awake()`](https://giotto-suite.github.io/GiottoUtils/reference/with.md)
+  hold a system sleep assertion during long computations (`caffeinate`
+  on macOS, `systemd-inhibit` on Linux, no-op elsewhere). A sleep
+  part-way through a run inflates wall-clock timings while CPU and
+  memory counters look normal
+
+### Enhancement
+
+- [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/reference/suite_install.md)
+  accepts `"tilework"` and `"arrow"` as modules under any ref, and adds
+  both automatically for *GiottoDisk*
+- `install_arrow` param for
+  [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/reference/suite_install.md).
+  *arrow* needs zstd support for 10x parquet files, and the source build
+  from r-universe is slow, so a missing or zstd-less *arrow* errors with
+  the install command unless `install_arrow = TRUE` (install) or `FALSE`
+  (skip)
+
+## GiottoUtils 0.2.6 (2026/09/02)
+
+### Enhancement
+
+- `"disk"` ref for
+  [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/reference/suite_install.md)
+  installs the on-disk build set (`gsource` branches + *GiottoDisk*)
+- *GiottoDisk* is now recognized as a Giotto Suite extension module
+- [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/reference/suite_install.md)
+  installs *GiottoData* from its `R4.1.0` branch for the `R4.4.0` and
+  `R4.1.0` refs. The default branch requires `R (>= 4.3.0)`, so it could
+  not be installed under the `R4.1.0` ref at all
+
 ## GiottoUtils 0.2.5 (2025/05/21)
 
 ### New

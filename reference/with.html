@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,9 @@
 <span></span>
 <span><span class="fu">gwith_package</span><span class="op">(</span><span class="va">package</span>, <span class="va">code</span>, pos <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">gwith_seed</span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">1234</span>, <span class="va">code</span>, <span class="va">...</span>, substitute <span class="op">=</span> <span class="cn">TRUE</span>, envir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">gwith_seed</span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">1234</span>, <span class="va">code</span>, <span class="va">...</span>, substitute <span class="op">=</span> <span class="cn">TRUE</span>, envir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">gwith_awake</span><span class="op">(</span><span class="va">code</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -94,6 +96,12 @@
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>gwith_seed()</code> : <code>...</code> passes to <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code></p>
+<p><code>gwith_awake()</code> : holds a sleep assertion for the duration of <code>code</code>, then
+releases it. A system sleep part-way through a long computation inflates its
+wall-clock time while leaving CPU time, memory and I/O counters looking
+normal, so an affected measurement is indistinguishable from a slow one
+without this. See <code><a href="keep_awake.html">keep_awake()</a></code>, which this wraps, for platform support and
+for the <code>giotto.prevent_sleep</code> kill switch.</p>
     </div>
     <div class="section level2">
     <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>
@@ -101,6 +109,7 @@
 <ul><li><p><code>gwith_options()</code>: Eval with temporary option setting</p></li>
 <li><p><code>gwith_package()</code>: Eval with temporarily attached package</p></li>
 <li><p><code>gwith_seed()</code>: Eval with temporary specifiable seed</p></li>
+<li><p><code>gwith_awake()</code>: Eval while preventing the machine from sleeping</p></li>
 </ul></div>
 
     <div class="section level2">
@@ -139,6 +148,13 @@
 <span class="r-in"><span><span class="va">end_seed</span> <span class="op">&lt;-</span> <span class="va">.Random.seed</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">start_seed</span>, <span class="va">end_seed</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span><span class="co"># sleep prevention ##########################</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="fu">gwith_awake</span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">runPCA</span><span class="op">(</span><span class="va">g</span>, feats_to_use <span class="op">=</span> <span class="st">"hvf"</span>, ncp <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">createNearestNetwork</span><span class="op">(</span><span class="va">g</span>, dim_reduction_to_use <span class="op">=</span> <span class="st">"pca"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

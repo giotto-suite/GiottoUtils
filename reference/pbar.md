@@ -36,7 +36,7 @@ pbar(
 
 - offset, scale:
 
-  (integer; optional) scale and offset applying transform
+  (integer; optional) scale and offset applying the transform
   `steps <- scale * steps + offset`.
 
 - transform:

@@ -31,5 +31,5 @@ character. Version number
 ``` r
 url <- "https://raw.githubusercontent.com/giotto-suite/GiottoData/master/DESCRIPTION"
 new_github_ver_avail(url, 0.2)
-#> [1] "0.2.16"
+#> [1] "0.3.7"
 ```

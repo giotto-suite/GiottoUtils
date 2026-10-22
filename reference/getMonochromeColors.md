@@ -23,7 +23,23 @@ getMonochromeColors(col, n = 256L, ...)
   Arguments passed on to
   [`grDevices::colorRampPalette`](https://rdrr.io/r/grDevices/colorRamp.html)
 
-  :   
+  `bias`
+
+  :   a positive number. Higher values give more widely spaced colors at
+      the high end.
+
+  `space`
+
+  :   a character string; interpolation in RGB or Lab color spaces.
+
+  `interpolate`
+
+  :   use spline or linear interpolation.
+
+  `alpha`
+
+  :   logical: should alpha channel (opacity) values be returned? It is
+      an error to give a true value if `space` is specified.
 
 ## Value
 

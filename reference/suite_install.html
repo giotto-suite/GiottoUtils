@@ -19,7 +19,7 @@ but non-Suite dependencies will never prompt to be updated."><meta property="og:
 
     <a class="navbar-brand me-2" href="../index.html">GiottoUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,6 +66,7 @@ but non-Suite dependencies will never prompt to be updated.</p>
 <span>  suite_deps <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ref <span class="op">=</span> <span class="st">"main"</span>,</span>
 <span>  dry_run <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  install_arrow <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -85,13 +86,20 @@ dependency modules</p></dd>
 
 
 <dt id="arg-ref">ref<a class="anchor" aria-label="anchor" href="#arg-ref"></a></dt>
-<dd><p>character. Currently one of "main", "R4.4.0", or "dev". These
-determine which branches to install. See details.</p></dd>
+<dd><p>character. Currently one of "main", "R4.4.0", "R4.1.0", "dev", or
+"disk". These determine which branches to install. See details.</p></dd>
 
 
 <dt id="arg-dry-run">dry_run<a class="anchor" aria-label="anchor" href="#arg-dry-run"></a></dt>
 <dd><p>logical. When <code>TRUE</code>, only print the install commands instead
 of actually running them.</p></dd>
+
+
+<dt id="arg-install-arrow">install_arrow<a class="anchor" aria-label="anchor" href="#arg-install-arrow"></a></dt>
+<dd><p>logical or <code>NULL</code>. Whether to (re)install <em>arrow</em> with
+zstd support when <code>"arrow"</code> is in <code>modules</code> and the installed version is
+missing or lacks zstd. <code>NULL</code> (default) errors with the install command,
+<code>TRUE</code> runs it, <code>FALSE</code> skips it. See the <em>Non-suite packages</em> section.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -130,6 +138,27 @@ requires installation of {Matrix} 1.6-5</p>
 <p>This version is ahead of the main version and also chases the latest R
 version.</p>
     </div>
+    <div class="section level2">
+    <h2 id="ref-disk-giottodisk-or-gsource">ref <code>"disk"</code>, <code>giottodisk</code>, or <code>gsource</code><a class="anchor" aria-label="anchor" href="#ref-disk-giottodisk-or-gsource"></a></h2>
+
+
+<p>The on-disk build set. Installs the <code>gsource</code> branches that <em>GiottoDisk</em>
+builds against, and <em>GiottoDisk</em> itself from its <code>dev</code> integration branch.
+This is the only ref <em>GiottoDisk</em> is compatible with, so requesting
+<em>GiottoDisk</em> with any other ref switches to this one.<br><em>GiottoData</em> and <em>GiottoDB</em> have no <code>gsource</code> branch and install from their
+default branch. Neither is part of the <em>GiottoDisk</em> dependency chain, so
+they are only installed when asked for by name.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="non-suite-packages">Non-suite packages<a class="anchor" aria-label="anchor" href="#non-suite-packages"></a></h2>
+
+
+<p><code>"tilework"</code> and <code>"arrow"</code> can be requested as <code>modules</code> under any ref. With
+<code>suite_deps = TRUE</code> they are only added automatically for <em>GiottoDisk</em>.<br><em>tilework</em> installs from GitHub. <em>arrow</em> installs from source through
+r-universe with zstd enabled, since zstd is needed for 10x parquet files.
+This build can take a long time, so it only runs when <em>arrow</em> is missing or
+lacks zstd and <code>install_arrow = TRUE</code>.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -137,6 +166,9 @@ version.</p>
 <span class="r-in"><span>    <span class="co"># install core packages</span></span></span>
 <span class="r-in"><span>    <span class="fu">suite_install</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="fu">suite_install</span><span class="op">(</span><span class="st">"GiottoClass"</span>, ref <span class="op">=</span> <span class="st">"dev"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="co"># install the on-disk build set</span></span></span>
+<span class="r-in"><span>    <span class="fu">suite_install</span><span class="op">(</span><span class="st">"GiottoDisk"</span>, ref <span class="op">=</span> <span class="st">"disk"</span>, install_arrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>    <span class="co"># install ONLY Giotto, ignoring module dependencies</span></span></span>
 <span class="r-in"><span>    <span class="co"># (i.e. GiottoVisuals, GiottoClass, etc)</span></span></span>

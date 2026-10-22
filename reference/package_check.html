@@ -15,7 +15,7 @@ status of."><meta property="og:image" content="https://giotto-suite.github.io/Gi
 
     <a class="navbar-brand me-2" href="../index.html">GiottoUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,8 +59,10 @@ status of.</p>
 <span>  <span class="va">pkg_name</span>,</span>
 <span>  repository <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  github_repo <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  optional <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  custom_msg <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  optional <span class="op">=</span> <span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  custom_msg <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  on_missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"error"</span>, <span class="st">"warning"</span>, <span class="st">"message"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  once <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -74,7 +76,9 @@ status of.</p>
 
 <dt id="arg-repository">repository<a class="anchor" aria-label="anchor" href="#arg-repository"></a></dt>
 <dd><p>where is the package (in format repo:cooltool for CRAN,
-Bioc, and pip repos. format repo:johndoe/cooltool for github or bitbucket)</p></dd>
+Bioc, and pip repos. format repo:johndoe/cooltool for github or bitbucket.
+format r-universe:johndoe/cooltool for the johndoe r-universe, which serves
+binaries, so prefer it over github for packages with compiled code)</p></dd>
 
 
 <dt id="arg-github-repo">github_repo<a class="anchor" aria-label="anchor" href="#arg-github-repo"></a></dt>
@@ -82,26 +86,45 @@ Bioc, and pip repos. format repo:johndoe/cooltool for github or bitbucket)</p></
 
 
 <dt id="arg-optional">optional<a class="anchor" aria-label="anchor" href="#arg-optional"></a></dt>
-<dd><p>whether the package is optional. If <code>TRUE</code>, an error is
-thrown. If <code>FALSE</code>, a warning is sent
-and only <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code> will be sent if FALSE.</p></dd>
+<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a> use <code>on_missing</code>.
+<code>TRUE</code> is <code>on_missing = "message"</code>, <code>FALSE</code> is <code>on_missing = "error"</code>.</p></dd>
 
 
 <dt id="arg-custom-msg">custom_msg<a class="anchor" aria-label="anchor" href="#arg-custom-msg"></a></dt>
 <dd><p>custom message to be sent instead of default error or
 message</p></dd>
 
+
+<dt id="arg-on-missing">on_missing<a class="anchor" aria-label="anchor" href="#arg-on-missing"></a></dt>
+<dd><p>character. What to do when a package is missing:
+<code>"error"</code> (default), <code>"warning"</code>, <code>"message"</code>, or <code>"none"</code> to report
+nothing. Every level but <code>"error"</code> returns <code>FALSE</code>, so the caller can
+fall back. An installed package below a requested version is reported at
+the same level, except that <code>"error"</code> reports it as a warning.</p></dd>
+
+
+<dt id="arg-once">once<a class="anchor" aria-label="anchor" href="#arg-once"></a></dt>
+<dd><p>logical. When <code>TRUE</code>, a warning or message is shown once per
+session for these packages, through <code>rlang</code>'s <code>.frequency = "once"</code>.
+Errors are always raised.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>character</p>
+    <p><code>TRUE</code> invisibly when every package is installed, otherwise
+<code>FALSE</code> invisibly (only reachable when <code>on_missing</code> is not <code>"error"</code>)</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu">package_check</span><span class="op">(</span><span class="st">"Matrix"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># use a package when it is there, fall back when it is not</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">package_check</span><span class="op">(</span><span class="st">"png"</span>, on_missing <span class="op">=</span> <span class="st">"message"</span><span class="op">)</span><span class="op">)</span> <span class="fu">png</span><span class="fu">::</span><span class="fu">readPNG</span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># an optional speedup, mentioned once per session</span></span></span>
+<span class="r-in"><span><span class="fu">package_check</span><span class="op">(</span><span class="st">"GiottoKernels"</span>, on_missing <span class="op">=</span> <span class="st">"message"</span>, once <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">package_check</span><span class="op">(</span><span class="st">"BiocSingular"</span>, repository <span class="op">=</span> <span class="st">"Bioc"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">package_check</span><span class="op">(</span><span class="st">"sedonadb"</span>, repository <span class="op">=</span> <span class="st">"r-universe:apache/sedonadb&gt;=0.4.0"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># (only expected to work when giottoenv is loaded)</span></span></span>
 <span class="r-in"><span><span class="fu">package_check</span><span class="op">(</span><span class="st">"leidenalg"</span>, repository <span class="op">=</span> <span class="st">"pip:leidenalg"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

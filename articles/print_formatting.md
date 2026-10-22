@@ -45,15 +45,6 @@ Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliqu
     ##  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
     ##  aliquip ex ea commodo consequat.
 
-You can also use sprintf formatting using `wrap_txtf`
-
-``` r
-
-wrap_txtf("%s morning", "good")
-```
-
-    ## [1] "good morning"
-
 See base behavior
 
 Base functions for console prints lack text wrapping. Linebreaks also
@@ -162,7 +153,7 @@ specific path to the logfile is stored within the
 vmsg(.v = "log", "Write this to a logfile in tempdir")
 ```
 
-    ## Logging to:/tmp/RtmpFHxVA7/giotto_20260826_1.txt
+    ## Logging to:/tmp/RtmpKcJifU/giotto_20261022_1.txt
 
 To read the log items, use
 [`giottoReadLog()`](https://giotto-suite.github.io/GiottoUtils/reference/giottoReadLog.md).
@@ -172,7 +163,7 @@ To read the log items, use
 giottoReadLog()
 ```
 
-    ## [1] " (2026-08-26 18:52:33) Write this to a logfile in tempdir"
+    ## [1] " (2026-10-22 18:31:39) Write this to a logfile in tempdir"
 
 You can start a new logfile using
 [`giottoNewLog()`](https://giotto-suite.github.io/GiottoUtils/reference/giottoNewLog.md)
@@ -223,7 +214,7 @@ sessionInfo()
 
     ## R version 4.6.1 (2026-06-24)
     ## Platform: x86_64-pc-linux-gnu
-    ## Running under: Ubuntu 24.04.4 LTS
+    ## Running under: Ubuntu 24.04.5 LTS
     ## 
     ## Matrix products: default
     ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -242,17 +233,17 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] GiottoUtils_0.2.5 BiocStyle_2.40.0 
+    ## [1] GiottoUtils_0.2.9 BiocStyle_2.40.0 
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] vctrs_0.7.3         cli_3.6.6           knitr_1.51         
-    ##  [4] rlang_1.3.0         xfun_0.60           otel_0.2.0         
+    ##  [1] vctrs_0.7.3         cli_3.6.6           knitr_1.52         
+    ##  [4] rlang_1.3.0         xfun_0.62           otel_0.2.0         
     ##  [7] textshaping_1.0.5   data.table_1.18.6.1 gtools_3.9.5       
     ## [10] jsonlite_2.0.0      glue_1.8.1          backports_1.5.1    
     ## [13] htmltools_0.5.9     ragg_1.5.2          sass_0.4.10        
-    ## [16] rmarkdown_2.31      evaluate_1.0.5      jquerylib_0.1.4    
+    ## [16] rmarkdown_2.32      evaluate_1.0.5      jquerylib_0.1.4    
     ## [19] fastmap_1.2.0       yaml_2.3.12         lifecycle_1.0.5    
-    ## [22] bookdown_0.47       BiocManager_1.30.27 compiler_4.6.1     
+    ## [22] bookdown_0.48       BiocManager_1.30.27 compiler_4.6.1     
     ## [25] fs_2.1.0            systemfonts_1.3.2   digest_0.6.39      
     ## [28] R6_2.6.1            pillar_1.11.1       parallel_4.6.1     
     ## [31] magrittr_2.0.5      checkmate_2.3.4     bslib_0.12.0       

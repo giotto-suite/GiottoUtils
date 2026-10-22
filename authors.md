@@ -22,13 +22,13 @@ Source:
 [`DESCRIPTION`](https://github.com/giotto-suite/Giotto/blob/website/DESCRIPTION)
 
 Dries R, George Chen J, Chávez-Fuentes J, Yuan G, O'Brien M, Ruiz E
-(2026). *GiottoUtils: Giotto Suite Utilities*. R package version 0.2.5,
+(2026). *GiottoUtils: Giotto Suite Utilities*. R package version 0.2.9,
 <https://giotto-suite.github.io/GiottoUtils/>.
 
     @Manual{,
       title = {GiottoUtils: Giotto Suite Utilities},
       author = {Ruben Dries and Jiaji {George Chen} and Joselyn C. Chávez-Fuentes and Guo-Cheng Yuan and Matthew O'Brien and Edward Ruiz},
       year = {2026},
-      note = {R package version 0.2.5},
+      note = {R package version 0.2.9},
       url = {https://giotto-suite.github.io/GiottoUtils/},
     }

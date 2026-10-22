@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,8 +59,21 @@
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed on to <code><a href="https://rdrr.io/r/grDevices/colorRamp.html" class="external-link">grDevices::colorRampPalette</a></code></p><dl><dt><code></code></dt>
-<dd></dd>
+<dd><p>Arguments passed on to <code><a href="https://rdrr.io/r/grDevices/colorRamp.html" class="external-link">grDevices::colorRampPalette</a></code></p><dl><dt><code>bias</code></dt>
+<dd><p>a positive number.  Higher values give more widely spaced
+    colors at the high end.</p></dd>
+
+    <dt><code>space</code></dt>
+<dd><p>a character string; interpolation in RGB or  Lab
+    color spaces.</p></dd>
+
+    <dt><code>interpolate</code></dt>
+<dd><p>use spline or linear interpolation.</p></dd>
+
+    <dt><code>alpha</code></dt>
+<dd><p>logical: should alpha channel (opacity) values be
+    returned?   It is an error to give a true value if
+    <code>space</code> is specified.</p></dd>
 
 
 </dl></dd>

@@ -79,24 +79,24 @@ list (default) or if `as.list = FALSE`, a character vector.
 ``` r
 dir_manifest()
 #> $check_github_suite_ver.html
-#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/docs/reference/check_github_suite_ver.html"
+#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/pkgsrc/docs/reference/check_github_suite_ver.html"
 #> 
 #> $color_tag.html
-#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/docs/reference/color_tag.html"
+#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/pkgsrc/docs/reference/color_tag.html"
 #> 
 #> $degrees.html
-#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/docs/reference/degrees.html"
+#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/pkgsrc/docs/reference/degrees.html"
 #> 
 #> $deprecate_param.html
-#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/docs/reference/deprecate_param.html"
+#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/pkgsrc/docs/reference/deprecate_param.html"
 #> 
 #> $depth.html
-#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/docs/reference/depth.html"
+#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/pkgsrc/docs/reference/depth.html"
 #> 
 #> $determine_cores.html
-#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/docs/reference/determine_cores.html"
+#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/pkgsrc/docs/reference/determine_cores.html"
 #> 
 #> $index.html
-#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/docs/reference/index.html"
+#> [1] "/home/runner/work/GiottoUtils/GiottoUtils/pkgsrc/docs/reference/index.html"
 #> 
 ```

@@ -40,11 +40,11 @@ with_pbar(
 - cleanup:
 
   If TRUE, all progression handlers will be shutdown at the end
-  regardless of the progression is complete or not.
+  regardless of whether the progression is complete or not.
 
 - delay_terminal:
 
-  If TRUE, output and conditions that may end up in the terminal will
+  If TRUE, output and conditions that may end up in the terminal will be
   delayed.
 
 - delay_stdout:
@@ -61,9 +61,9 @@ with_pbar(
 
 - interrupts:
 
-  Controls whether interrupts should be detected or not. If TRUE and a
+  Controls whether interrupts should be detected or not. If TRUE and an
   interrupt is signaled, progress handlers are asked to report on the
-  current amount progress when the evaluation was terminated by the
+  current amount of progress when the evaluation was terminated by the
   interrupt, e.g. when a user pressed Ctrl-C in an interactive session,
   or a batch process was interrupted because it ran out of time. Note
   that it's optional for a progress handler to support this and only

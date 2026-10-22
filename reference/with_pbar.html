@@ -21,7 +21,7 @@ time."><meta property="og:image" content="https://giotto-suite.github.io/GiottoU
 
     <a class="navbar-brand me-2" href="../index.html">GiottoUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,12 +92,12 @@ If NULL or an empty list, progress updates are ignored.</p></dd>
 
 <dt id="arg-cleanup">cleanup<a class="anchor" aria-label="anchor" href="#arg-cleanup"></a></dt>
 <dd><p>If TRUE, all progression handlers will be shutdown
-at the end regardless of the progression is complete or not.</p></dd>
+at the end regardless of whether the progression is complete or not.</p></dd>
 
 
 <dt id="arg-delay-terminal">delay_terminal<a class="anchor" aria-label="anchor" href="#arg-delay-terminal"></a></dt>
 <dd><p>If TRUE, output and conditions that may end up in
-the terminal will delayed.</p></dd>
+the terminal will be delayed.</p></dd>
 
 
 <dt id="arg-delay-stdout">delay_stdout<a class="anchor" aria-label="anchor" href="#arg-delay-stdout"></a></dt>
@@ -113,8 +113,8 @@ standard output is relayed.</p></dd>
 
 <dt id="arg-interrupts">interrupts<a class="anchor" aria-label="anchor" href="#arg-interrupts"></a></dt>
 <dd><p>Controls whether interrupts should be detected or not.
-If TRUE and a interrupt is signaled, progress handlers are asked to
-report on the current amount progress when the evaluation was terminated
+If TRUE and an interrupt is signaled, progress handlers are asked to
+report on the current amount of progress when the evaluation was terminated
 by the interrupt, e.g. when a user pressed Ctrl-C in an interactive session,
 or a batch process was interrupted because it ran out of time.
 Note that it's optional for a progress handler to support this and only

@@ -13,8 +13,10 @@ package_check(
   pkg_name,
   repository = NULL,
   github_repo = NULL,
-  optional = FALSE,
-  custom_msg = NULL
+  optional = deprecated(),
+  custom_msg = NULL,
+  on_missing = c("error", "warning", "message", "none"),
+  once = FALSE
 )
 ```
 
@@ -27,7 +29,9 @@ package_check(
 - repository:
 
   where is the package (in format repo:cooltool for CRAN, Bioc, and pip
-  repos. format repo:johndoe/cooltool for github or bitbucket)
+  repos. format repo:johndoe/cooltool for github or bitbucket. format
+  r-universe:johndoe/cooltool for the johndoe r-universe, which serves
+  binaries, so prefer it over github for packages with compiled code)
 
 - github_repo:
 
@@ -35,25 +39,43 @@ package_check(
 
 - optional:
 
-  whether the package is optional. If `TRUE`, an error is thrown. If
-  `FALSE`, a warning is sent and only
-  [`message()`](https://rdrr.io/r/base/message.html) will be sent if
-  FALSE.
+  **\[deprecated\]** use `on_missing`. `TRUE` is
+  `on_missing = "message"`, `FALSE` is `on_missing = "error"`.
 
 - custom_msg:
 
   custom message to be sent instead of default error or message
 
+- on_missing:
+
+  character. What to do when a package is missing: `"error"` (default),
+  `"warning"`, `"message"`, or `"none"` to report nothing. Every level
+  but `"error"` returns `FALSE`, so the caller can fall back. An
+  installed package below a requested version is reported at the same
+  level, except that `"error"` reports it as a warning.
+
+- once:
+
+  logical. When `TRUE`, a warning or message is shown once per session
+  for these packages, through `rlang`'s `.frequency = "once"`. Errors
+  are always raised.
+
 ## Value
 
-character
+`TRUE` invisibly when every package is installed, otherwise `FALSE`
+invisibly (only reachable when `on_missing` is not `"error"`)
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
 package_check("Matrix")
+# use a package when it is there, fall back when it is not
+if (package_check("png", on_missing = "message")) png::readPNG(f)
+# an optional speedup, mentioned once per session
+package_check("GiottoKernels", on_missing = "message", once = TRUE)
 package_check("BiocSingular", repository = "Bioc")
+package_check("sedonadb", repository = "r-universe:apache/sedonadb>=0.4.0")
 # (only expected to work when giottoenv is loaded)
 package_check("leidenalg", repository = "pip:leidenalg")
 

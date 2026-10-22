@@ -60,12 +60,14 @@ get_prev_fname(1)
 # preserve params
 foo <- function(a, b) get_args(toplevel = 1)
 foo(a = 1, b = 2)
-#> Error in get(fun, mode = "function", envir = envir): object 'foo' of mode 'function' was not found
+#>   a   b 
+#> "1" "2" 
 
 bar <- function() get_args() # default toplevel = 2
 baz <- function(x, y) bar()
 baz("a", "b")
-#> Error in get(fun, mode = "function", envir = envir): object 'baz' of mode 'function' was not found
+#>   x   y 
+#> "a" "b" 
 a <- function(x = 1, y = 2, ...) {
     get_args_list(...)
 }

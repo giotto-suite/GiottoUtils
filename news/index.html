@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">GiottoUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,58 @@
       <small>Source: <a href="https://github.com/giotto-suite/Giotto/blob/website/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.9" id="giottoutils-029-20261022">GiottoUtils 0.2.9 (2026/10/22)<a class="anchor" aria-label="anchor" href="#giottoutils-029-20261022"></a></h2>
+<div class="section level3">
+<h3 id="new-0-2-9">New<a class="anchor" aria-label="anchor" href="#new-0-2-9"></a></h3>
+<ul><li>
+<code><a href="../reference/package_check.html">package_check()</a></code> gains <code>on_missing</code> (<code>"error"</code>, <code>"warning"</code>, <code>"message"</code> or <code>"none"</code>) for what to do when a package is missing, and <code>once = TRUE</code> to show a warning or message once per session. An installed package below a requested version is reported at the same level (<code>"error"</code> still reports it as a warning)</li>
+<li>
+<code><a href="../reference/package_check.html">package_check()</a></code> accepts <code>repository = "r-universe:owner/package"</code>. The install message points at that owner’s r-universe (with CRAN for dependencies), which serves binaries where an install from GitHub would compile from source</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-0-2-9">Changes<a class="anchor" aria-label="anchor" href="#changes-0-2-9"></a></h3>
+<ul><li>
+<code><a href="../reference/package_check.html">package_check()</a></code> returns <code>FALSE</code> when a package is missing and <code>on_missing</code> is not <code>"error"</code>. It returned <code>TRUE</code> before, so <code>if (package_check(x, optional = TRUE))</code> never skipped its body for a missing package</li>
+<li>
+<code>package_check(optional)</code> is deprecated in favour of <code>on_missing</code>. <code>TRUE</code> maps to <code>"message"</code> and <code>FALSE</code> to <code>"error"</code>
+</li>
+<li>
+<code><a href="../reference/package_check.html">package_check()</a></code> with several packages, one of them missing and given a version request, now reports the install instructions. It errored in <code><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion()</a></code> instead</li>
+<li>
+<code>suite_install(install_arrow = TRUE)</code> builds <em>arrow</em> in a fresh library. Its dependencies now come from CRAN (only r-universe was searched before, so they were not found and the build failed with a warning), and the install stops with an error if the result still lacks zstd</li>
+<li>
+<code><a href="../reference/suite_install.html">suite_install()</a></code> installs <em>tilework</em> from its <code>dev</code> branch until tilework 1.0.1 is on CRAN. <code>main</code> lacks the tile-edge fix (drieslab/tilework#5): without it, a point or polygon on the top or right edge of the data can fall outside every tile and be dropped from a GiottoDisk store</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.7" id="giottoutils-027-20260925">GiottoUtils 0.2.7 (2026/09/25)<a class="anchor" aria-label="anchor" href="#giottoutils-027-20260925"></a></h2>
+<div class="section level3">
+<h3 id="new-0-2-7">New<a class="anchor" aria-label="anchor" href="#new-0-2-7"></a></h3>
+<ul><li>
+<code><a href="../reference/keep_awake.html">keep_awake()</a></code> and <code><a href="../reference/with.html">gwith_awake()</a></code> hold a system sleep assertion during long computations (<code>caffeinate</code> on macOS, <code>systemd-inhibit</code> on Linux, no-op elsewhere). A sleep part-way through a run inflates wall-clock timings while CPU and memory counters look normal</li>
+</ul></div>
+<div class="section level3">
+<h3 id="enhancement-0-2-7">Enhancement<a class="anchor" aria-label="anchor" href="#enhancement-0-2-7"></a></h3>
+<ul><li>
+<code><a href="../reference/suite_install.html">suite_install()</a></code> accepts <code>"tilework"</code> and <code>"arrow"</code> as modules under any ref, and adds both automatically for <em>GiottoDisk</em>
+</li>
+<li>
+<code>install_arrow</code> param for <code><a href="../reference/suite_install.html">suite_install()</a></code>. <em>arrow</em> needs zstd support for 10x parquet files, and the source build from r-universe is slow, so a missing or zstd-less <em>arrow</em> errors with the install command unless <code>install_arrow = TRUE</code> (install) or <code>FALSE</code> (skip)</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.6" id="giottoutils-026-20260902">GiottoUtils 0.2.6 (2026/09/02)<a class="anchor" aria-label="anchor" href="#giottoutils-026-20260902"></a></h2>
+<div class="section level3">
+<h3 id="enhancement-0-2-6">Enhancement<a class="anchor" aria-label="anchor" href="#enhancement-0-2-6"></a></h3>
+<ul><li>
+<code>"disk"</code> ref for <code><a href="../reference/suite_install.html">suite_install()</a></code> installs the on-disk build set (<code>gsource</code> branches + <em>GiottoDisk</em>)</li>
+<li>
+<em>GiottoDisk</em> is now recognized as a Giotto Suite extension module</li>
+<li>
+<code><a href="../reference/suite_install.html">suite_install()</a></code> installs <em>GiottoData</em> from its <code>R4.1.0</code> branch for the <code>R4.4.0</code> and <code>R4.1.0</code> refs. The default branch requires <code>R (&gt;= 4.3.0)</code>, so it could not be installed under the <code>R4.1.0</code> ref at all</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.5" id="giottoutils-025-20250521">GiottoUtils 0.2.5 (2025/05/21)<a class="anchor" aria-label="anchor" href="#giottoutils-025-20250521"></a></h2>
 <div class="section level3">

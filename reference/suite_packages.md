@@ -30,8 +30,8 @@ suite_packages()
 suite_packages("core")
 #> [1] "GiottoUtils"   "GiottoClass"   "GiottoVisuals" "Giotto"       
 suite_packages("extensions")
-#> [1] "GiottoData" "GiottoDB"  
+#> [1] "GiottoData" "GiottoDB"   "GiottoDisk"
 suite_packages("all")
 #> [1] "GiottoUtils"   "GiottoClass"   "GiottoVisuals" "Giotto"       
-#> [5] "GiottoData"    "GiottoDB"     
+#> [5] "GiottoData"    "GiottoDB"      "GiottoDisk"   
 ```

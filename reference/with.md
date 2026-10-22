@@ -10,6 +10,8 @@ gwith_options(new, code)
 gwith_package(package, code, pos = 2L)
 
 gwith_seed(seed = 1234, code, ..., substitute = TRUE, envir = parent.frame())
+
+gwith_awake(code)
 ```
 
 ## Arguments
@@ -58,6 +60,15 @@ the evaluated value of `code`
 `gwith_seed()` : `...` passes to
 [`set.seed()`](https://rdrr.io/r/base/Random.html)
 
+`gwith_awake()` : holds a sleep assertion for the duration of `code`,
+then releases it. A system sleep part-way through a long computation
+inflates its wall-clock time while leaving CPU time, memory and I/O
+counters looking normal, so an affected measurement is indistinguishable
+from a slow one without this. See
+[`keep_awake()`](https://giotto-suite.github.io/GiottoUtils/reference/keep_awake.md),
+which this wraps, for platform support and for the
+`giotto.prevent_sleep` kill switch.
+
 ## Functions
 
 - `gwith_options()`: Eval with temporary option setting
@@ -65,6 +76,8 @@ the evaluated value of `code`
 - `gwith_package()`: Eval with temporarily attached package
 
 - `gwith_seed()`: Eval with temporary specifiable seed
+
+- `gwith_awake()`: Eval while preventing the machine from sleeping
 
 ## Examples
 
@@ -103,4 +116,11 @@ identical(a, b)
 end_seed <- .Random.seed
 identical(start_seed, end_seed)
 #> [1] TRUE
+# sleep prevention ##########################
+if (FALSE) { # \dontrun{
+gwith_awake({
+    g <- runPCA(g, feats_to_use = "hvf", ncp = 30)
+    g <- createNearestNetwork(g, dim_reduction_to_use = "pca")
+})
+} # }
 ```

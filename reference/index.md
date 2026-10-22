@@ -60,6 +60,9 @@
 - [`init_option()`](https://giotto-suite.github.io/GiottoUtils/reference/init_option.md)
   : Initialize an option
 
+- [`keep_awake()`](https://giotto-suite.github.io/GiottoUtils/reference/keep_awake.md)
+  : keep_awake
+
 - [`lifecycle_badge()`](https://giotto-suite.github.io/GiottoUtils/reference/lifecycle_badge.md)
   : lifecycle badge
 
@@ -136,6 +139,7 @@
 - [`gwith_options()`](https://giotto-suite.github.io/GiottoUtils/reference/with.md)
   [`gwith_package()`](https://giotto-suite.github.io/GiottoUtils/reference/with.md)
   [`gwith_seed()`](https://giotto-suite.github.io/GiottoUtils/reference/with.md)
+  [`gwith_awake()`](https://giotto-suite.github.io/GiottoUtils/reference/with.md)
   : With utilities
 
 - [`with_pbar()`](https://giotto-suite.github.io/GiottoUtils/reference/with_pbar.md)

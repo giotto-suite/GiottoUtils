@@ -5,21 +5,21 @@ to see their documentation.
 
 - gtools:
 
-  [`mixedorder`](https://rdrr.io/pkg/gtools/man/mixedsort.html),
-  [`mixedsort`](https://rdrr.io/pkg/gtools/man/mixedsort.html)
+  [`mixedorder()`](https://rdrr.io/pkg/gtools/man/mixedsort.html),
+  [`mixedsort()`](https://rdrr.io/pkg/gtools/man/mixedsort.html)
 
 - jsonlite:
 
-  [`fromJSON`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html),
-  [`read_json`](https://jeroen.r-universe.dev/jsonlite/reference/read_json.html)
+  [`fromJSON()`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html),
+  [`read_json()`](https://jeroen.r-universe.dev/jsonlite/reference/read_json.html)
 
 - lifecycle:
 
-  [`deprecate_soft`](https://lifecycle.r-lib.org/reference/deprecate_soft.html),
-  [`deprecate_stop`](https://lifecycle.r-lib.org/reference/deprecate_soft.html),
-  [`deprecate_warn`](https://lifecycle.r-lib.org/reference/deprecate_soft.html),
-  [`deprecated`](https://lifecycle.r-lib.org/reference/deprecated.html),
-  [`is_present`](https://lifecycle.r-lib.org/reference/deprecated.html)
+  [`deprecate_soft()`](https://lifecycle.r-lib.org/reference/deprecate_soft.html),
+  [`deprecate_stop()`](https://lifecycle.r-lib.org/reference/deprecate_soft.html),
+  [`deprecate_warn()`](https://lifecycle.r-lib.org/reference/deprecate_soft.html),
+  [`deprecated()`](https://lifecycle.r-lib.org/reference/deprecated.html),
+  [`is_present()`](https://lifecycle.r-lib.org/reference/deprecated.html)
 
 ## Value
 
