@@ -8,27 +8,41 @@ package_check(
   pkg_name,
   repository = NULL,
   github_repo = NULL,
-  optional = FALSE,
-  custom_msg = NULL
+  optional = deprecated(),
+  custom_msg = NULL,
+  on_missing = c("error", "warning", "message", "none"),
+  once = FALSE
 )
 }
 \arguments{
 \item{pkg_name}{name of package}
 
 \item{repository}{where is the package (in format repo:cooltool for CRAN,
-Bioc, and pip repos. format repo:johndoe/cooltool for github or bitbucket)}
+Bioc, and pip repos. format repo:johndoe/cooltool for github or bitbucket.
+format r-universe:johndoe/cooltool for the johndoe r-universe, which serves
+binaries, so prefer it over github for packages with compiled code)}
 
 \item{github_repo}{name of github repository if needed}
 
-\item{optional}{whether the package is optional. If \code{TRUE}, an error is
-thrown. If \code{FALSE}, a warning is sent
-and only \code{message()} will be sent if FALSE.}
+\item{optional}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} use \code{on_missing}.
+\code{TRUE} is \code{on_missing = "message"}, \code{FALSE} is \code{on_missing = "error"}.}
 
 \item{custom_msg}{custom message to be sent instead of default error or
 message}
+
+\item{on_missing}{character. What to do when a package is missing:
+\code{"error"} (default), \code{"warning"}, \code{"message"}, or \code{"none"} to report
+nothing. Every level but \code{"error"} returns \code{FALSE}, so the caller can
+fall back. An installed package below a requested version is reported at
+the same level, except that \code{"error"} reports it as a warning.}
+
+\item{once}{logical. When \code{TRUE}, a warning or message is shown once per
+session for these packages, through \code{rlang}'s \code{.frequency = "once"}.
+Errors are always raised.}
 }
 \value{
-character
+\code{TRUE} invisibly when every package is installed, otherwise
+\code{FALSE} invisibly (only reachable when \code{on_missing} is not \code{"error"})
 }
 \description{
 check if package is available and provide installation
@@ -40,7 +54,12 @@ status of.
 \examples{
 \dontrun{
 package_check("Matrix")
+# use a package when it is there, fall back when it is not
+if (package_check("png", on_missing = "message")) png::readPNG(f)
+# an optional speedup, mentioned once per session
+package_check("GiottoKernels", on_missing = "message", once = TRUE)
 package_check("BiocSingular", repository = "Bioc")
+package_check("sedonadb", repository = "r-universe:apache/sedonadb>=0.4.0")
 # (only expected to work when giottoenv is loaded)
 package_check("leidenalg", repository = "pip:leidenalg")
 

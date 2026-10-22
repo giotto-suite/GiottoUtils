@@ -45,6 +45,10 @@ suite_packages <- function(type = "core") {
 #' "disk". These determine which branches to install. See details.
 #' @param dry_run logical. When `TRUE`, only print the install commands instead
 #' of actually running them.
+#' @param install_arrow logical or `NULL`. Whether to (re)install *arrow* with
+#' zstd support when `"arrow"` is in `modules` and the installed version is
+#' missing or lacks zstd. `NULL` (default) errors with the install command,
+#' `TRUE` runs it, `FALSE` skips it. See the *Non-suite packages* section.
 #' @param \dots additional params to pass to `remotes::install_github()`
 #' @section ref `"main"`:
 #' Installs the main Giotto version. This version is expected to chase the
@@ -66,6 +70,13 @@ suite_packages <- function(type = "core") {
 #' *GiottoData* and *GiottoDB* have no `gsource` branch and install from their
 #' default branch. Neither is part of the *GiottoDisk* dependency chain, so
 #' they are only installed when asked for by name.
+#' @section Non-suite packages:
+#' `"tilework"` and `"arrow"` can be requested as `modules` under any ref. With
+#' `suite_deps = TRUE` they are only added automatically for *GiottoDisk*.\cr
+#' *tilework* installs from GitHub. *arrow* installs from source through
+#' r-universe with zstd enabled, since zstd is needed for 10x parquet files.
+#' This build can take a long time, so it only runs when *arrow* is missing or
+#' lacks zstd and `install_arrow = TRUE`.
 #' @returns `TRUE` if install succeeds
 #' @examples
 #' if (FALSE) {
@@ -74,7 +85,7 @@ suite_packages <- function(type = "core") {
 #'     suite_install("GiottoClass", ref = "dev")
 #'
 #'     # install the on-disk build set
-#'     suite_install("GiottoDisk", ref = "disk")
+#'     suite_install("GiottoDisk", ref = "disk", install_arrow = TRUE)
 #'
 #'     # install ONLY Giotto, ignoring module dependencies
 #'     # (i.e. GiottoVisuals, GiottoClass, etc)
@@ -86,6 +97,7 @@ suite_install <- function(
         suite_deps = TRUE,
         ref = "main",
         dry_run = FALSE,
+        install_arrow = NULL,
         ...) {
     package_check("remotes", repository = "CRAN")
 
@@ -102,7 +114,7 @@ suite_install <- function(
         ref <- "R4.4.0"
     }
 
-    not_module <- !modules %in% suite_packages("all")
+    not_module <- !modules %in% c(suite_packages("all"), names(.auxrefs))
     if (any(not_module)) {
         stop(sprintf(
             "The following are not Giotto Suite modules:\n\'%s\'",
@@ -116,6 +128,9 @@ suite_install <- function(
             modules <- c(
                 "Giotto", "GiottoVisuals", "GiottoClass", "GiottoUtils", modules
             )
+            if ("GiottoDisk" %in% modules) {
+                modules <- c("arrow", "tilework", modules)
+            }
         } else if ("GiottoVisuals" %in% modules) {
             modules <- c("GiottoVisuals", "GiottoClass", "GiottoUtils", modules)
         } else if ("GiottoData" %in% modules) {
@@ -138,12 +153,19 @@ suite_install <- function(
     # pick set of repo references
     ref <- match.arg(ref, c("main", "dev", "disk", "R4.4.0", "R4.1.0"))
     fullrefs <- switch(ref,
-        "main" = .mainrefs[modules],
-        "dev" = .devrefs[modules],
-        "disk" = .diskrefs[modules],
-        "R4.4.0" = .r440refs[modules],
-        "R4.1.0" = .r410refs[modules]
+        "main" = .mainrefs,
+        "dev" = .devrefs,
+        "disk" = .diskrefs,
+        "R4.4.0" = .r440refs,
+        "R4.1.0" = .r410refs
     )
+    fullrefs <- c(.auxrefs, fullrefs)
+
+    # decide on arrow before anything installs so a NULL install_arrow fails
+    # fast instead of partway through the list
+    if ("arrow" %in% modules) {
+        do_arrow <- .arrow_install_plan(.arrow_status(), install_arrow)
+    }
 
     repos <- fullrefs[modules]
     vmsg(.is_debug = TRUE, "\n")
@@ -151,6 +173,10 @@ suite_install <- function(
 
     # install loop
     for (r in repos) {
+        if (identical(r, "arrow")) {
+            if (do_arrow) .install_arrow_zstd(dry_run = dry_run)
+            next
+        }
         if (isTRUE(dry_run)) {
             'remotes::install_github(repo = %s, upgrade = "never", ...)' %>%
                 sprintf(r) %>%
@@ -191,6 +217,16 @@ suite_install <- function(
         return(ref) # no change
     }
 }
+
+# non-suite packages installable under any ref. "arrow" is not a GitHub repo
+# and is handled separately by .install_arrow_zstd()
+# tilework installs from dev until 1.0.1 is on CRAN: main lacks the tile-edge
+# fix (drieslab/tilework#5) that GiottoDisk needs. Revert to the default branch
+# after the release.
+.auxrefs <- c(
+    arrow = "arrow",
+    tilework = "drieslab/tilework@dev"
+)
 
 .mainrefs <- c(
     GiottoUtils = "giotto-suite/GiottoUtils",
@@ -241,6 +277,8 @@ suite_install <- function(
 )
 
 .module_inst_order <- c(
+    "arrow",
+    "tilework",
     "GiottoUtils",
     "GiottoClass",
     "GiottoData",
@@ -249,3 +287,96 @@ suite_install <- function(
     "Giotto",
     "GiottoDisk"
 )
+
+# arrow + zstd ####
+
+.arrow_repos <- c(
+    "https://apache.r-universe.dev",
+    CRAN = "https://cloud.r-project.org"
+)
+
+.arrow_install_cmd <- paste(
+    'Sys.setenv(ARROW_WITH_ZSTD = "ON")',
+    'install.packages("arrow",',
+    '    repos = c("https://apache.r-universe.dev", "https://cloud.r-project.org"),',
+    '    type = "source"',
+    ')',
+    sep = "\n"
+)
+
+# "ok", "missing", or "no_zstd"
+.arrow_status <- function() {
+    if (!requireNamespace("arrow", quietly = TRUE)) {
+        return("missing")
+    }
+    # See https://arrow.apache.org/docs/r/articles/install.html for details
+    zstd <- arrow::arrow_info()$capabilities[["zstd"]]
+    if (isTRUE(zstd)) "ok" else "no_zstd"
+}
+
+# TRUE when arrow should be (re)installed. Errors when an install is needed
+# and install_arrow was left NULL.
+.arrow_install_plan <- function(status, install_arrow = NULL) {
+    if (!is.null(install_arrow) &&
+        !(is.logical(install_arrow) && length(install_arrow) == 1L &&
+            !is.na(install_arrow))) {
+        stop("[suite_install] `install_arrow` must be NULL, TRUE, or FALSE",
+            call. = FALSE
+        )
+    }
+    if (identical(status, "ok")) {
+        vmsg("arrow is already installed with zstd support. Skipping")
+        return(FALSE)
+    }
+    problem <- switch(status,
+        "missing" = "arrow is not installed.",
+        "no_zstd" = "arrow is installed without zstd support."
+    )
+    if (is.null(install_arrow)) {
+        stop(sprintf(paste0(
+            "[suite_install] %s\n",
+            "zstd compression is needed to read 10x parquet files. ",
+            "Install arrow from r-universe with zstd enabled:\n\n%s\n\n",
+            "This builds from source and may take a while.\n",
+            "Set `install_arrow = TRUE` to run this automatically, ",
+            "or `install_arrow = FALSE` to skip it."
+        ), problem, .arrow_install_cmd), call. = FALSE)
+    }
+    if (!install_arrow) {
+        vmsg(problem, "Skipping (install_arrow = FALSE)")
+    }
+    install_arrow
+}
+
+.install_arrow_zstd <- function(dry_run = FALSE) {
+    if (isTRUE(dry_run)) {
+        message(.arrow_install_cmd)
+        return(invisible(TRUE))
+    }
+    old <- Sys.getenv("ARROW_WITH_ZSTD", unset = NA)
+    on.exit({
+        if (is.na(old)) {
+            Sys.unsetenv("ARROW_WITH_ZSTD")
+        } else {
+            Sys.setenv(ARROW_WITH_ZSTD = old)
+        }
+    }, add = TRUE)
+    Sys.setenv(ARROW_WITH_ZSTD = "ON")
+    # arrow from r-universe, its dependencies (R6, vctrs, cpp11, ...) from CRAN.
+    # With r-universe alone they are not found in a fresh library and the build
+    # fails with only a warning.
+    install.packages("arrow", repos = .arrow_repos, type = "source")
+    if (isNamespaceLoaded("arrow")) {
+        vmsg("arrow was loaded before reinstalling. Restart R to use the new build")
+        return(invisible(TRUE))
+    }
+    status <- .arrow_status()
+    if (!identical(status, "ok")) {
+        stop(sprintf(paste0(
+            "[suite_install] the arrow build did not give arrow with zstd ",
+            "support (%s). See the install log above, and ",
+            "https://arrow.apache.org/docs/r/articles/install.html"
+        ), status), call. = FALSE)
+    }
+    invisible(TRUE)
+}
