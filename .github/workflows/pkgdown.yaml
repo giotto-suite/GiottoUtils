@@ -1,6 +1,10 @@
 # Builds the GiottoUtils sites:
-#   release  https://giotto-suite.github.io/GiottoUtils/      latest GitHub release
+#   release  https://giotto-suite.github.io/GiottoUtils/      the default branch (main)
 #   dev      https://giotto-suite.github.io/GiottoUtils/dev/  the dev branch
+#
+# main is production: a merge to main is a release and bumps the version, so
+# main's head is the released version. Tags archive releases; nothing here
+# depends on them.
 #
 # This branch holds the website content only (_pkgdown.yml and pkgdown/). The
 # package source is checked out at build time, so the branch never has to be
@@ -10,9 +14,9 @@
 # WHEN DOES EACH SITE REBUILD?
 #   push / PR here      both sites (a PR builds without deploying)
 #   dev changes         dev site, dispatched by pkgdown-dev-trigger.yaml on dev
-#   a new release       run this workflow by hand. A `release` event runs the
-#                       workflow file at the tagged commit, and main carries no
-#                       CI, so it cannot trigger this.
+#   a new release       run this workflow by hand. Triggering it from main
+#                       would need a workflow file there, and main carries no
+#                       CI.
 #
 # Vignettes come from the documented ref, not from this branch: see
 # pkgdown/pre-build.sh.
@@ -35,7 +39,7 @@ on:
         options: [both, release, dev]
         default: both
       release-ref:
-        description: "Tag for the release site (default: latest release)"
+        description: "Ref for the release site (default: the default branch)"
         required: false
       dev-ref:
         description: "Branch for the dev site"
@@ -47,16 +51,16 @@ jobs:
     if: inputs.site != 'dev'
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.tag.outputs.tag }}
+      ref: ${{ steps.ref.outputs.ref }}
     steps:
-      - id: tag
+      - id: ref
         env:
           GH_TOKEN: ${{ github.token }}
           INPUT_REF: ${{ inputs.release-ref }}
         run: |
-          tag="${INPUT_REF:-$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName -q .tagName)}"
-          echo "release site documents $tag"
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          ref="${INPUT_REF:-$(gh api "repos/$GITHUB_REPOSITORY" -q .default_branch)}"
+          echo "release site documents $ref"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
   release:
     needs: release-ref
@@ -68,7 +72,7 @@ jobs:
     with:
       mode: release
       package-repo: ${{ github.repository }}
-      package-ref: ${{ needs.release-ref.outputs.tag }}
+      package-ref: ${{ needs.release-ref.outputs.ref }}
       overlay-files: "_pkgdown.yml"
       dependencies: '"hard"'
       extra-packages: "any::pkgdown, bioc::BiocStyle, local::."
