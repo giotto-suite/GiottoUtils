@@ -81,6 +81,31 @@ test_that("Nonexisting nonoptional packages with specified custom message will e
     )
 })
 
+test_that("r-universe packages point at the universe with CRAN for deps", {
+    expect_true(package_check("GiottoUtils",
+        repository = "r-universe:giotto-suite/GiottoUtils"))
+    expect_error(
+        package_check("I-dont-exist",
+            repository = "r-universe:johndoe/I-dont-exist"),
+        regexp = paste0(
+            "install.packages\\(\"I-dont-exist\",\n",
+            "    repos = c\\(\"https://johndoe.r-universe.dev\", ",
+            "\"https://cloud.r-project.org\"\\)\\)"
+        )
+    )
+    package_check("GiottoUtils",
+        repository = "r-universe:giotto-suite/GiottoUtils>=1000") |>
+        expect_warning()
+})
+
+test_that("r-universe inputs without an owner error", {
+    expect_error(package_check("cooltool", repository = "r-universe"),
+        regexp = "r-universe:owner/package")
+    expect_error(
+        package_check("cooltool", repository = "r-universe:cooltool"),
+        regexp = "r-universe:owner/package")
+})
+
 # check name parsing internal
 
 parsefun <- get(".check_package_parse_version_request", asNamespace("GiottoUtils"))

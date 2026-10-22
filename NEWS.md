@@ -1,5 +1,8 @@
 # GiottoUtils 0.2.8 (TBD)
 
+## New
+- `package_check()` accepts `repository = "r-universe:owner/package"`. The install message points at that owner's r-universe (with CRAN for dependencies), which serves binaries where an install from GitHub would compile from source
+
 ## Changes
 - `package_check()` with several packages, one of them missing and given a version request, now reports the install instructions. It errored in `packageVersion()` instead
 - `suite_install(install_arrow = TRUE)` builds *arrow* in a fresh library. Its dependencies now come from CRAN (only r-universe was searched before, so they were not found and the build failed with a warning), and the install stops with an error if the result still lacks zstd

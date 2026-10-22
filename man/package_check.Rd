@@ -16,7 +16,9 @@ package_check(
 \item{pkg_name}{name of package}
 
 \item{repository}{where is the package (in format repo:cooltool for CRAN,
-Bioc, and pip repos. format repo:johndoe/cooltool for github or bitbucket)}
+Bioc, and pip repos. format repo:johndoe/cooltool for github or bitbucket.
+format r-universe:johndoe/cooltool for the johndoe r-universe, which serves
+binaries, so prefer it over github for packages with compiled code)}
 
 \item{github_repo}{name of github repository if needed}
 
@@ -41,6 +43,7 @@ status of.
 \dontrun{
 package_check("Matrix")
 package_check("BiocSingular", repository = "Bioc")
+package_check("sedonadb", repository = "r-universe:apache/sedonadb>=0.4.0")
 # (only expected to work when giottoenv is loaded)
 package_check("leidenalg", repository = "pip:leidenalg")
 
