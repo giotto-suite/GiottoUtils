@@ -14,9 +14,10 @@
 # WHEN DOES EACH SITE REBUILD?
 #   push / PR here      both sites (a PR builds without deploying)
 #   dev changes         dev site, dispatched by pkgdown-dev-trigger.yaml on dev
-#   a new release       run this workflow by hand. Triggering it from main
-#                       would need a workflow file there, and main carries no
-#                       CI.
+#   a new release       within a day: giotto-suite/.github's "rebuild release
+#                       sites" job dispatches a release-only build when main
+#                       has moved (main carries no CI, so it cannot trigger
+#                       this itself). Run by hand to go sooner.
 #
 # Vignettes come from the documented ref, not from this branch: see
 # pkgdown/pre-build.sh.
