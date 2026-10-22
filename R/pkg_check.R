@@ -234,7 +234,7 @@ package_check <- function(
 
     # check versions for non-missing pkgs
     repos_dt[, version := NA_character_]
-    vchecks <- which(repos_dt[, !isTRUE(missing) & !is.na(version_req)])
+    vchecks <- which(repos_dt[, !missing & !is.na(version_req)])
     for (v_i in vchecks) {
         repos_dt[v_i, version := .check_package_version(location, repo)]
     }

@@ -117,3 +117,11 @@ test_that("version requirement works", {
     package_check("scipy", repository = "pip:scipy>=1000") |> expect_warning()
     package_check("scipy", repository = "pip:scipy~=0.0.1") |> expect_error() # not supported
 })
+
+test_that("a missing package beside a version request gets install instructions", {
+    package_check(
+        c("I-dont-exist", "data.table"),
+        repository = c("CRAN:I-dont-exist>=1.0", "CRAN:data.table>=0.0.1")
+    ) |>
+        expect_error(regexp = "install.packages")
+})
