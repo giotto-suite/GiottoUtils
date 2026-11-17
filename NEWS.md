@@ -1,3 +1,13 @@
+# GiottoUtils 0.2.10 (2026/11/17)
+
+## New
+- `"disk_full"` ref for `suite_install()` installs the whole on-disk pipeline from the `"disk"` ref's branches: *GiottoDisk*, *GiottoLens* and the optional speed-up and extension packages (*GiottoKernels*, *GiottoIngest*, *smotif*, *smotifrs*, *cosmxscan*, *spatialDWLS*, *sedonadb*)
+- *GiottoLens* is now recognized as a Giotto Suite extension module. Like *GiottoDisk*, it only installs with the `"disk"` ref
+
+## Changes
+- `suite_install()` installs *tilework* and the optional packages from their r-universe, which serves binaries for macOS, Windows and Ubuntu, instead of compiling them from GitHub
+
+
 # GiottoUtils 0.2.9 (2026/10/22)
 
 ## New
