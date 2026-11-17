@@ -1,4 +1,4 @@
-# GiottoUtils 0.2.10 (TBD)
+# GiottoUtils 0.2.10 (2026/11/17)
 
 ## New
 - `"disk_full"` ref for `suite_install()` installs the whole on-disk pipeline from the `"disk"` ref's branches: *GiottoDisk*, *GiottoLens* and the optional speed-up and extension packages (*GiottoKernels*, *GiottoIngest*, *smotif*, *smotifrs*, *cosmxscan*, *spatialDWLS*, *sedonadb*)
