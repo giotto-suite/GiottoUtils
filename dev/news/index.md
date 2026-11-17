@@ -1,6 +1,6 @@
 # Changelog
 
-## GiottoUtils 0.2.10 (TBD)
+## GiottoUtils 0.2.10 (2026/11/17)
 
 ### New
 
