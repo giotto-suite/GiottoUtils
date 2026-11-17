@@ -10,8 +10,8 @@ to see their documentation.
 
 - jsonlite:
 
-  [`fromJSON()`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html),
-  [`read_json()`](https://jeroen.r-universe.dev/jsonlite/reference/read_json.html)
+  [`fromJSON()`](https://rdrr.io/pkg/jsonlite/man/fromJSON.html),
+  [`read_json()`](https://rdrr.io/pkg/jsonlite/man/read_json.html)
 
 - lifecycle:
 

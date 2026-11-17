@@ -1,5 +1,25 @@
 # Changelog
 
+## GiottoUtils 0.2.10 (TBD)
+
+### New
+
+- `"disk_full"` ref for
+  [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/suite_install.md)
+  installs the whole on-disk pipeline from the `"disk"` ref’s branches:
+  *GiottoDisk*, *GiottoLens* and the optional speed-up and extension
+  packages (*GiottoKernels*, *GiottoIngest*, *smotif*, *smotifrs*,
+  *cosmxscan*, *spatialDWLS*, *sedonadb*)
+- *GiottoLens* is now recognized as a Giotto Suite extension module.
+  Like *GiottoDisk*, it only installs with the `"disk"` ref
+
+### Changes
+
+- [`suite_install()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/suite_install.md)
+  installs *tilework* and the optional packages from their r-universe,
+  which serves binaries for macOS, Windows and Ubuntu, instead of
+  compiling them from GitHub
+
 ## GiottoUtils 0.2.9 (2026/10/22)
 
 ### New
@@ -188,10 +208,9 @@
   as progress reporting utils. These are wrappers around *progressr*
   functionalities.
 - reexports of
-  [`fromJSON()`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
-  and
-  [`read_json()`](https://jeroen.r-universe.dev/jsonlite/reference/read_json.html)
-  from `jsonlite`.
+  [`fromJSON()`](https://rdrr.io/pkg/jsonlite/man/fromJSON.html) and
+  [`read_json()`](https://rdrr.io/pkg/jsonlite/man/read_json.html) from
+  `jsonlite`.
 - [`melt_matrix()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/melt_matrix.md)
   to emulate `reshape2::melt.matrix()` (deprecated package) for most use
   cases in Giotto.
