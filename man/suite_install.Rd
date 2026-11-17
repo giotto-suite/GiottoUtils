@@ -20,8 +20,9 @@ packages needed for Giotto to run.}
 \item{suite_deps}{logical. Whether to install any potential Giotto Suite
 dependency modules}
 
-\item{ref}{character. Currently one of "main", "R4.4.0", "R4.1.0", "dev", or
-"disk". These determine which branches to install. See details.}
+\item{ref}{character. Currently one of "main", "R4.4.0", "R4.1.0", "dev",
+"disk", or "disk_full". These determine which branches to install. See
+details.}
 
 \item{dry_run}{logical. When \code{TRUE}, only print the install commands instead
 of actually running them.}
@@ -73,22 +74,34 @@ version.
 \section{ref \code{"disk"}, \code{giottodisk}, or \code{gsource}}{
 
 The on-disk build set. Installs the \code{gsource} branches that \emph{GiottoDisk}
-builds against, and \emph{GiottoDisk} itself from its \code{dev} integration branch.
-This is the only ref \emph{GiottoDisk} is compatible with, so requesting
-\emph{GiottoDisk} with any other ref switches to this one.\cr
+builds against, \emph{GiottoDisk} itself from its \code{dev} integration branch, and
+\emph{GiottoLens} from its default branch. This is the only ref \emph{GiottoDisk} and
+\emph{GiottoLens} are compatible with, so requesting either with any other ref
+switches to this one.\cr
 \emph{GiottoData} and \emph{GiottoDB} have no \code{gsource} branch and install from their
 default branch. Neither is part of the \emph{GiottoDisk} dependency chain, so
 they are only installed when asked for by name.
 }
 
+\section{ref \code{"disk_full"}}{
+
+The whole on-disk pipeline, from the same branches as \code{"disk"}. Adds
+\emph{GiottoDisk}, \emph{GiottoLens} and the optional packages that speed up or extend
+it (\emph{GiottoKernels}, \emph{GiottoIngest}, \emph{smotif}, \emph{smotifrs}, \emph{cosmxscan},
+\emph{spatialDWLS} and \emph{sedonadb}) to \code{modules}.
+}
+
 \section{Non-suite packages}{
 
-\code{"tilework"} and \code{"arrow"} can be requested as \code{modules} under any ref. With
-\code{suite_deps = TRUE} they are only added automatically for \emph{GiottoDisk}.\cr
-\emph{tilework} installs from GitHub. \emph{arrow} installs from source through
-r-universe with zstd enabled, since zstd is needed for 10x parquet files.
-This build can take a long time, so it only runs when \emph{arrow} is missing or
-lacks zstd and \code{install_arrow = TRUE}.
+\emph{arrow}, \emph{tilework} and the optional packages listed under \code{"disk_full"} can
+be requested as \code{modules} under any ref. With \code{suite_deps = TRUE}, \emph{arrow}
+and \emph{tilework} are only added automatically for \emph{GiottoDisk}.\cr
+All but \emph{arrow} install from their r-universe, which serves binaries for
+macOS, Windows and Ubuntu. Other Linux systems build them from source, and
+the Rust packages then need \code{cargo} and access to crates.io.\cr
+\emph{arrow} installs from source through r-universe with zstd enabled, since
+zstd is needed for 10x parquet files. This build can take a long time, so it
+only runs when \emph{arrow} is missing or lacks zstd and \code{install_arrow = TRUE}.
 }
 
 \examples{
@@ -99,6 +112,9 @@ if (FALSE) {
 
     # install the on-disk build set
     suite_install("GiottoDisk", ref = "disk", install_arrow = TRUE)
+
+    # install the whole on-disk pipeline, with the viewer and speed-ups
+    suite_install(ref = "disk_full", install_arrow = TRUE)
 
     # install ONLY Giotto, ignoring module dependencies
     # (i.e. GiottoVisuals, GiottoClass, etc)
