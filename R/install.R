@@ -17,7 +17,7 @@ suite_packages <- function(type = "core") {
     type <- match.arg(type, c("core", "extensions", "all"))
     suite_pkgs <- list(
         "core" = c("GiottoUtils", "GiottoClass", "GiottoVisuals", "Giotto"),
-        "extensions" = c("GiottoData", "GiottoDB", "GiottoDisk")
+        "extensions" = c("GiottoData", "GiottoDB", "GiottoDisk", "GiottoLens")
     )
     switch(type,
         "core" = suite_pkgs$core,
@@ -41,8 +41,9 @@ suite_packages <- function(type = "core") {
 #' packages needed for Giotto to run.
 #' @param suite_deps logical. Whether to install any potential Giotto Suite
 #' dependency modules
-#' @param ref character. Currently one of "main", "R4.4.0", "R4.1.0", "dev", or
-#' "disk". These determine which branches to install. See details.
+#' @param ref character. Currently one of "main", "R4.4.0", "R4.1.0", "dev",
+#' "disk", or "disk_full". These determine which branches to install. See
+#' details.
 #' @param dry_run logical. When `TRUE`, only print the install commands instead
 #' of actually running them.
 #' @param install_arrow logical or `NULL`. Whether to (re)install *arrow* with
@@ -64,19 +65,28 @@ suite_packages <- function(type = "core") {
 #' version.
 #' @section ref `"disk"`, `giottodisk`, or `gsource`:
 #' The on-disk build set. Installs the `gsource` branches that *GiottoDisk*
-#' builds against, and *GiottoDisk* itself from its `dev` integration branch.
-#' This is the only ref *GiottoDisk* is compatible with, so requesting
-#' *GiottoDisk* with any other ref switches to this one.\cr
+#' builds against, *GiottoDisk* itself from its `dev` integration branch, and
+#' *GiottoLens* from its default branch. This is the only ref *GiottoDisk* and
+#' *GiottoLens* are compatible with, so requesting either with any other ref
+#' switches to this one.\cr
 #' *GiottoData* and *GiottoDB* have no `gsource` branch and install from their
 #' default branch. Neither is part of the *GiottoDisk* dependency chain, so
 #' they are only installed when asked for by name.
+#' @section ref `"disk_full"`:
+#' The whole on-disk pipeline, from the same branches as `"disk"`. Adds
+#' *GiottoDisk*, *GiottoLens* and the optional packages that speed up or extend
+#' it (*GiottoKernels*, *GiottoIngest*, *smotif*, *smotifrs*, *cosmxscan*,
+#' *spatialDWLS* and *sedonadb*) to `modules`.
 #' @section Non-suite packages:
-#' `"tilework"` and `"arrow"` can be requested as `modules` under any ref. With
-#' `suite_deps = TRUE` they are only added automatically for *GiottoDisk*.\cr
-#' *tilework* installs from GitHub. *arrow* installs from source through
-#' r-universe with zstd enabled, since zstd is needed for 10x parquet files.
-#' This build can take a long time, so it only runs when *arrow* is missing or
-#' lacks zstd and `install_arrow = TRUE`.
+#' *arrow*, *tilework* and the optional packages listed under `"disk_full"` can
+#' be requested as `modules` under any ref. With `suite_deps = TRUE`, *arrow*
+#' and *tilework* are only added automatically for *GiottoDisk*.\cr
+#' All but *arrow* install from their r-universe, which serves binaries for
+#' macOS, Windows and Ubuntu. Other Linux systems build them from source, and
+#' the Rust packages then need `cargo` and access to crates.io.\cr
+#' *arrow* installs from source through r-universe with zstd enabled, since
+#' zstd is needed for 10x parquet files. This build can take a long time, so it
+#' only runs when *arrow* is missing or lacks zstd and `install_arrow = TRUE`.
 #' @returns `TRUE` if install succeeds
 #' @examples
 #' if (FALSE) {
@@ -86,6 +96,9 @@ suite_packages <- function(type = "core") {
 #'
 #'     # install the on-disk build set
 #'     suite_install("GiottoDisk", ref = "disk", install_arrow = TRUE)
+#'
+#'     # install the whole on-disk pipeline, with the viewer and speed-ups
+#'     suite_install(ref = "disk_full", install_arrow = TRUE)
 #'
 #'     # install ONLY Giotto, ignoring module dependencies
 #'     # (i.e. GiottoVisuals, GiottoClass, etc)
@@ -103,9 +116,19 @@ suite_install <- function(
 
     ref <- .guess_ref(ref)
 
-    # GiottoDisk only builds against the disk ref
-    if ("GiottoDisk" %in% modules && !identical(ref, "disk")) {
-        vmsg("GiottoDisk requested. Switching to the \"disk\" ref")
+    # disk_full is the disk branches with the whole pipeline as install list
+    if (identical(ref, "disk_full")) {
+        modules <- c(modules, .disk_full_modules)
+        ref <- "disk"
+    }
+
+    # GiottoDisk and GiottoLens only build against the disk ref
+    disk_only <- intersect(c("GiottoDisk", "GiottoLens"), modules)
+    if (length(disk_only) && !identical(ref, "disk")) {
+        vmsg(sprintf(
+            "%s requested. Switching to the \"disk\" ref",
+            paste(disk_only, collapse = " and ")
+        ))
         ref <- "disk"
     }
 
@@ -177,6 +200,10 @@ suite_install <- function(
             if (do_arrow) .install_arrow_zstd(dry_run = dry_run)
             next
         }
+        if (startsWith(r, "r-universe:")) {
+            .install_runiverse(sub("^r-universe:", "", r), dry_run = dry_run)
+            next
+        }
         if (isTRUE(dry_run)) {
             'remotes::install_github(repo = %s, upgrade = "never", ...)' %>%
                 sprintf(r) %>%
@@ -209,6 +236,8 @@ suite_install <- function(
         return("dev")
     } else if (x %in% c("disk", "giottodisk", "gsource")) {
         return("disk")
+    } else if (x == "disk_full") {
+        return("disk_full")
     } else if (x %in% c("r4.4.0", "r440", "440")) {
         return("R4.4.0")
     } else if (x %in% c("r4.1.0", "r410", "410")) {
@@ -219,13 +248,27 @@ suite_install <- function(
 }
 
 # non-suite packages installable under any ref. "arrow" is not a GitHub repo
-# and is handled separately by .install_arrow_zstd()
-# tilework installs from dev until 1.0.1 is on CRAN: main lacks the tile-edge
-# fix (drieslab/tilework#5) that GiottoDisk needs. Revert to the default branch
-# after the release.
+# and is handled separately by .install_arrow_zstd(). The rest install from
+# r-universe, whose registries build them from the same branches as the disk
+# ref, so they need no per-ref entries.
+# The drieslab registry builds tilework from dev until 1.0.1 is on CRAN: main
+# lacks the tile-edge fix (drieslab/tilework#5) that GiottoDisk needs.
 .auxrefs <- c(
     arrow = "arrow",
-    tilework = "drieslab/tilework@dev"
+    tilework = "r-universe:drieslab/tilework",
+    GiottoKernels = "r-universe:giotto-suite/GiottoKernels",
+    GiottoIngest = "r-universe:giotto-suite/GiottoIngest",
+    smotifrs = "r-universe:drieslab/smotifrs",
+    smotif = "r-universe:drieslab/smotif",
+    cosmxscan = "r-universe:drieslab/cosmxscan",
+    spatialDWLS = "r-universe:drieslab/spatialDWLS",
+    sedonadb = "r-universe:apache/sedonadb"
+)
+
+# added to `modules` by ref = "disk_full"
+.disk_full_modules <- c(
+    "GiottoDisk", "GiottoLens", "GiottoKernels", "GiottoIngest", "smotifrs",
+    "smotif", "cosmxscan", "spatialDWLS", "sedonadb"
 )
 
 .mainrefs <- c(
@@ -255,7 +298,8 @@ suite_install <- function(
     Giotto = "giotto-suite/Giotto@gsource",
     GiottoData = "giotto-suite/GiottoData", # no gsource branch
     GiottoDB = "giotto-suite/GiottoDB", # no gsource branch
-    GiottoDisk = "giotto-suite/GiottoDisk@dev"
+    GiottoDisk = "giotto-suite/GiottoDisk@dev",
+    GiottoLens = "giotto-suite/GiottoLens"
 )
 
 .r440refs <- c(
@@ -285,8 +329,46 @@ suite_install <- function(
     "GiottoDB",
     "GiottoVisuals",
     "Giotto",
-    "GiottoDisk"
+    "GiottoKernels",
+    "GiottoIngest",
+    "smotifrs",
+    "smotif",
+    "cosmxscan",
+    "spatialDWLS",
+    "sedonadb",
+    "GiottoDisk",
+    "GiottoLens"
 )
+
+# r-universe ####
+
+# The suite's own universes are listed for every package, since their packages
+# import each other across owners (GiottoIngest imports tilework). Another
+# owner's universe is listed only for its own package, so the rest of what it
+# serves does not shadow CRAN.
+.suite_universes <- c("giotto-suite", "drieslab")
+
+.runiverse_repos <- function(owner) {
+    c(
+        sprintf("https://%s.r-universe.dev", unique(c(owner, .suite_universes))),
+        CRAN = "https://cloud.r-project.org"
+    )
+}
+
+# location is "owner/package"
+.install_runiverse <- function(location, dry_run = FALSE) {
+    pkg <- sub(".*/", "", location)
+    repos <- .runiverse_repos(sub("/.*", "", location))
+    if (isTRUE(dry_run)) {
+        message(sprintf(
+            "install.packages(\"%s\", repos = c(%s))",
+            pkg, paste0("\"", repos, "\"", collapse = ", ")
+        ))
+        return(invisible(TRUE))
+    }
+    install.packages(pkg, repos = repos)
+    invisible(TRUE)
+}
 
 # arrow + zstd ####
 

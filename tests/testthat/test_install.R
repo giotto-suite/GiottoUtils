@@ -99,7 +99,7 @@ test_that("refs work", {
 test_that("tilework and arrow are reachable from any ref", {
     for (ref in c("main", "dev", "disk", "R4.4.0", "R4.1.0")) {
         suite_install("tilework", ref = ref, dry_run = TRUE) %>%
-            expect_message(regexp = "drieslab/tilework")
+            expect_message(regexp = "\"tilework\".*drieslab\\.r-universe")
         expect_no_error(
             suite_install("arrow", ref = ref, dry_run = TRUE,
                           install_arrow = FALSE)
@@ -111,11 +111,69 @@ test_that("tilework and arrow are reachable from any ref", {
     msgs <- capture_messages(
         suite_install("GiottoDisk", dry_run = TRUE, install_arrow = FALSE)
     )
-    expect_true(grepl("tilework", msgs[grep("install_github", msgs)[1]]))
+    installs <- grep("install_github|install\\.packages", msgs, value = TRUE)
+    expect_true(grepl("tilework", installs[1]))
     msgs <- capture_messages(
         suite_install("GiottoDisk", suite_deps = FALSE, dry_run = TRUE)
     )
     expect_false(any(grepl("tilework", msgs)))
+})
+
+test_that("disk_full installs the pipeline from the disk branches", {
+    msgs <- capture_messages(
+        suite_install(ref = "disk_full", dry_run = TRUE, install_arrow = FALSE)
+    )
+    installs <- grep("install_github|install\\.packages", msgs, value = TRUE)
+    github <- c(
+        "GiottoUtils@dev", "GiottoClass@gsource", "GiottoVisuals@gsource",
+        "Giotto@gsource", "GiottoDisk@dev", "giotto-suite/GiottoLens,"
+    )
+    runiverse <- c(
+        "tilework", "GiottoKernels", "GiottoIngest", "smotifrs", "smotif",
+        "cosmxscan", "spatialDWLS", "sedonadb"
+    )
+    for (x in github) {
+        expect_true(any(grepl(x, installs, fixed = TRUE)), info = x)
+    }
+    for (x in runiverse) {
+        expect_true(
+            any(grepl(sprintf("install.packages(\"%s\"", x), installs,
+                fixed = TRUE)),
+            info = x
+        )
+    }
+    expect_length(installs, length(github) + length(runiverse))
+    # dependencies before dependents, the viewer last
+    expect_match(installs[1], "tilework")
+    expect_match(installs[length(installs)], "GiottoLens")
+    # case-insensitive like the other refs
+    expect_identical(
+        capture_messages(
+            suite_install(ref = "DISK_FULL", dry_run = TRUE,
+                install_arrow = FALSE)
+        ),
+        msgs
+    )
+})
+
+test_that("GiottoLens switches to the disk ref", {
+    suite_install("GiottoLens", ref = "main", dry_run = TRUE) %>%
+        expect_message(regexp = "GiottoLens requested. Switching") %>%
+        expect_message(regexp = "giotto-suite/GiottoLens")
+})
+
+test_that("r-universe installs list the suite universes and CRAN", {
+    repos <- .runiverse_repos("drieslab")
+    expect_identical(unname(repos), c(
+        "https://drieslab.r-universe.dev",
+        "https://giotto-suite.r-universe.dev",
+        "https://cloud.r-project.org"
+    ))
+    # another owner's universe only for its own package
+    expect_true("https://apache.r-universe.dev" %in% .runiverse_repos("apache"))
+    expect_false(any(grepl("apache", .runiverse_repos("giotto-suite"))))
+    suite_install("sedonadb", dry_run = TRUE) %>%
+        expect_message(regexp = "\"sedonadb\".*apache\\.r-universe")
 })
 
 test_that("install_arrow gates the arrow install", {
