@@ -38,6 +38,7 @@ Imports:
     tools
 Suggests:
     arrow,
+    callr,
     BiocParallel,
     BiocStyle,
     dplyr,
@@ -75,6 +76,7 @@ Collate:
     'pkg_check.R'
     'prev_call.R'
     'progress.R'
+    'py_run.R'
     'py_utils.R'
     'reshape.R'
     'seed.R'
