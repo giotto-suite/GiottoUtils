@@ -119,7 +119,13 @@ py_result <- function(x) {
     }
     # start Python now, so command line tools find their program next to
     # reticulate::py_exe()
-    invisible(reticulate::py_config())
+    tryCatch(invisible(reticulate::py_config()), error = function(e) {
+        stop("no Python environment could be made for ",
+            paste(requirements, collapse = ", "),
+            if (!is.null(python_version)) paste0(" (Python ", python_version,
+                ")"), " on this platform: ", conditionMessage(e),
+            call. = FALSE)
+    })
     # a Python error holds Python objects that cannot be sent back to the
     # calling session: rethrow it as a plain R error
     value <- tryCatch(do.call(fun, args), error = function(e) {
