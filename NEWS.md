@@ -1,3 +1,9 @@
+# GiottoUtils 0.2.11
+
+## New
+- `py_run()` runs a Python tool in a worker R session (callr) whose environment holds the tool's requirements, built and cached by uv through `reticulate::py_require()` (reticulate >= 1.41). The calling session never starts Python, so tools with conflicting requirements run in one analysis, side by side; `background = TRUE` and `py_result()` run one in the background. Each result carries the Python and package versions used. `options(giotto.py_python =)` points every tool, or each tool by name, at an own Python installation instead. callr is suggested
+
+
 # GiottoUtils 0.2.10 (2026/11/17)
 
 ## New
