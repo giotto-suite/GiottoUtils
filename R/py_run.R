@@ -117,6 +117,9 @@ py_result <- function(x) {
     } else if (length(requirements) || !is.null(python_version)) {
         reticulate::py_require(requirements, python_version = python_version)
     }
+    # start Python now, so command line tools find their program next to
+    # reticulate::py_exe()
+    invisible(reticulate::py_config())
     # a Python error holds Python objects that cannot be sent back to the
     # calling session: rethrow it as a plain R error
     value <- tryCatch(do.call(fun, args), error = function(e) {
