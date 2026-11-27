@@ -95,6 +95,11 @@
 - [`py_active_env()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/py_active_env.md)
   : Active python environment
 
+- [`py_run()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/py_run.md)
+  [`py_result()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/py_run.md)
+  [`py_run_cli()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/py_run.md)
+  : Run a Python tool in a worker R session
+
 - [`random_seed()`](https://giotto-suite.github.io/GiottoUtils/dev/reference/random_seed.md)
   : Set a random seed
 
