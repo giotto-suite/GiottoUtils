@@ -1,6 +1,6 @@
 Package: GiottoUtils
 Title: Giotto Suite Utilities
-Version: 0.2.10
+Version: 0.2.11
 Authors@R: c(
 	person("Ruben", "Dries", email = "rubendries@gmail.com",
 		 role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7650-7754")),
@@ -38,6 +38,7 @@ Imports:
     tools
 Suggests:
     arrow,
+    callr,
     BiocParallel,
     BiocStyle,
     dplyr,
@@ -75,6 +76,7 @@ Collate:
     'pkg_check.R'
     'prev_call.R'
     'progress.R'
+    'py_run.R'
     'py_utils.R'
     'reshape.R'
     'seed.R'
