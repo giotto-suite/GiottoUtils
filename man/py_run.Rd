@@ -3,6 +3,7 @@
 \name{py_run}
 \alias{py_run}
 \alias{py_result}
+\alias{py_run_cli}
 \title{Run a Python tool in a worker R session}
 \usage{
 py_run(
@@ -13,17 +14,30 @@ py_run(
   isolate = getOption("giotto.py_isolate", TRUE),
   background = FALSE,
   name = NULL,
-  python = .py_user_python(name),
+  python = NULL,
   verbose = FALSE
 )
 
 py_result(x)
+
+py_run_cli(
+  program,
+  args = character(),
+  requirements,
+  python_version = NULL,
+  log_file = NULL,
+  name = program,
+  ...
+)
 }
 \arguments{
-\item{fun}{function run in the worker with \code{args}. It must be
-self-contained: its environment is replaced by the worker's global
-environment, so it reaches packages with \code{::} and gets its data only
-through \code{args}.}
+\item{fun}{function run in the worker with \code{args}. A function defined in a
+package keeps that package's namespace (the worker loads the package),
+so it can use the package's internal functions and imports. Any other
+function must be self-contained: its environment is replaced by the
+worker's global environment, so it reaches packages with \code{::} and gets
+its data only through \code{args}. The calling session's \verb{giotto.*} options
+are set in the worker.}
 
 \item{args}{named list of arguments for \code{fun}. They are copied into the
 worker; pass large data as file paths.}
@@ -46,12 +60,21 @@ Python installation in option \code{giotto.py_python}.}
 
 \item{python}{character or \code{NULL}. Path of a Python executable to use
 instead of a uv environment (its packages are then the user's own
-responsibility). Default: option \code{giotto.py_python}, either one path for
-every tool or a named list of paths per tool (\code{name}).}
+responsibility). \code{NULL} (default) uses option \code{giotto.py_python}, either
+one path for every tool or a named list of paths per tool (\code{name}), and
+otherwise a uv environment.}
 
 \item{verbose}{show the worker's output}
 
 \item{x}{a process returned by \code{py_run(background = TRUE)}}
+
+\item{program}{character. Name of the command line program.}
+
+\item{log_file}{character or \code{NULL}. File for the program's output; when it
+fails, the error shows the end of this file. \code{NULL} sends the output to
+the worker's console (shown with \code{verbose = TRUE}).}
+
+\item{...}{further arguments for \code{py_run()}}
 }
 \value{
 The value of \code{fun}, with attribute \code{"py_versions"}: the Python
@@ -66,6 +89,10 @@ tools with conflicting requirements can run in the same analysis, side by
 side, and a crash in Python does not end the calling session.
 The first run of a set of requirements says that its environment is
 being installed, and how to use an own Python instead.
+
+\code{py_run_cli()} runs a Python tool's command line program the same way: the
+program installed with \code{requirements} (next to the worker's Python) is
+run with \code{args}.
 }
 \examples{
 \dontrun{

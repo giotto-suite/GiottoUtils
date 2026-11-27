@@ -49,3 +49,31 @@ test_that("py_run() runs Python in a worker and reports versions", {
     expect_error(py_run(function() reticulate::import("not_a_module"),
         requirements = "numpy"), "not_a_module")
 })
+
+test_that("package functions keep their namespace and giotto options reach the worker", {
+    skip_on_cran()
+    skip_if_offline()
+    skip_if_not_installed("callr")
+    skip_if_not_installed("reticulate", minimum_version = "1.41")
+    old <- options(giotto.py_testopt = "a")
+    on.exit(options(old), add = TRUE)
+    expect_identical(as.character(py_run(function() getOption("giotto.py_testopt"),
+        requirements = "numpy")), "a")
+    # .py_first_use() calls the internal .py_used_file()
+    res <- suppressMessages(py_run(.py_first_use, args = list(
+        requirements = "numpy", python_version = NULL), requirements = "numpy"))
+    expect_type(as.vector(res), "logical")
+})
+
+test_that("py_run_cli() runs a program next to the worker's Python", {
+    skip_on_cran()
+    skip_if_offline()
+    skip_if_not_installed("callr")
+    skip_if_not_installed("reticulate", minimum_version = "1.41")
+    prog <- if (.Platform$OS.type == "windows") "python" else "python3"
+    expect_true(as.vector(py_run_cli(prog, c("-c", "print(1)"),
+        requirements = "numpy")))
+    log <- tempfile()
+    expect_error(py_run_cli(prog, c("-c", "import sys; print('boom'); sys.exit(3)"),
+        requirements = "numpy", log_file = log), "status 3.*boom")
+})

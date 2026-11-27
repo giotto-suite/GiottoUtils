@@ -8,10 +8,13 @@
 #' side, and a crash in Python does not end the calling session.
 #' The first run of a set of requirements says that its environment is
 #' being installed, and how to use an own Python instead.
-#' @param fun function run in the worker with `args`. It must be
-#'   self-contained: its environment is replaced by the worker's global
-#'   environment, so it reaches packages with `::` and gets its data only
-#'   through `args`.
+#' @param fun function run in the worker with `args`. A function defined in a
+#'   package keeps that package's namespace (the worker loads the package),
+#'   so it can use the package's internal functions and imports. Any other
+#'   function must be self-contained: its environment is replaced by the
+#'   worker's global environment, so it reaches packages with `::` and gets
+#'   its data only through `args`. The calling session's `giotto.*` options
+#'   are set in the worker.
 #' @param args named list of arguments for `fun`. They are copied into the
 #'   worker; pass large data as file paths.
 #' @param requirements character. Python packages, as for
@@ -27,8 +30,9 @@
 #'   Python installation in option `giotto.py_python`.
 #' @param python character or `NULL`. Path of a Python executable to use
 #'   instead of a uv environment (its packages are then the user's own
-#'   responsibility). Default: option `giotto.py_python`, either one path for
-#'   every tool or a named list of paths per tool (`name`).
+#'   responsibility). `NULL` (default) uses option `giotto.py_python`, either
+#'   one path for every tool or a named list of paths per tool (`name`), and
+#'   otherwise a uv environment.
 #' @param verbose show the worker's output
 #' @returns The value of `fun`, with attribute `"py_versions"`: the Python
 #'   version and the installed version of each requirement. With
@@ -44,7 +48,7 @@
 #' @export
 py_run <- function(fun, args = list(), requirements = character(),
     python_version = NULL, isolate = getOption("giotto.py_isolate", TRUE),
-    background = FALSE, name = NULL, python = .py_user_python(name),
+    background = FALSE, name = NULL, python = NULL,
     verbose = FALSE) {
     checkmate::assert_function(fun)
     checkmate::assert_list(args)
@@ -55,12 +59,17 @@ py_run <- function(fun, args = list(), requirements = character(),
         stop("[py_run] reticulate >= 1.41 is needed (py_require())",
             call. = FALSE)
     }
-    environment(fun) <- globalenv()
+    # a package function keeps its namespace, which is serialized by name
+    # and loaded in the worker; other closures would drag their environment
+    if (!isNamespace(environment(fun))) environment(fun) <- globalenv()
     task <- .py_run_task
     environment(task) <- globalenv()
+    python <- python %null% .py_user_python(name)
     checkmate::assert_string(python, null.ok = TRUE)
+    opts <- options()
     targs <- list(fun = fun, args = args, requirements = requirements,
-        python_version = python_version, python = python)
+        python_version = python_version, python = python,
+        options = opts[startsWith(names(opts), "giotto.")])
 
     if (!isTRUE(isolate) && isTRUE(background)) {
         stop("[py_run] background = TRUE needs isolate = TRUE", call. = FALSE)
@@ -91,6 +100,52 @@ py_run <- function(fun, args = list(), requirements = character(),
 py_result <- function(x) {
     x$wait()
     .py_run_unwrap(.py_run_rethrow(x$get_result()))
+}
+
+#' @rdname py_run
+#' @description
+#' `py_run_cli()` runs a Python tool's command line program the same way: the
+#' program installed with `requirements` (next to the worker's Python) is
+#' run with `args`.
+#' @param program character. Name of the command line program.
+#' @param log_file character or `NULL`. File for the program's output; when it
+#'   fails, the error shows the end of this file. `NULL` sends the output to
+#'   the worker's console (shown with `verbose = TRUE`).
+#' @param ... further arguments for `py_run()`
+#' @export
+py_run_cli <- function(program, args = character(), requirements,
+    python_version = NULL, log_file = NULL, name = program, ...) {
+    checkmate::assert_string(program)
+    checkmate::assert_string(log_file, null.ok = TRUE)
+    py_run(.py_cli_worker,
+        args = list(program = program, args = as.character(args),
+            log_file = log_file),
+        requirements = requirements, python_version = python_version,
+        name = name, ...)
+}
+
+# Runs in the worker: the program sits next to the worker's Python (or in
+# Scripts/ of a conda environment on Windows).
+.py_cli_worker <- function(program, args, log_file = NULL) {
+    bin <- dirname(reticulate::py_exe())
+    exe <- if (.Platform$OS.type == "windows") paste0(program, ".exe") else
+        program
+    cand <- file.path(c(bin, file.path(bin, "Scripts")), exe)
+    exe <- cand[file.exists(cand)][1L]
+    if (is.na(exe)) {
+        stop("program '", program, "' not found next to ",
+            reticulate::py_exe(), call. = FALSE)
+    }
+    out <- log_file %null% ""
+    status <- system2(exe, shQuote(args), stdout = out, stderr = out)
+    if (!identical(as.integer(status), 0L)) {
+        tail_log <- if (!is.null(log_file) && file.exists(log_file)) {
+            paste0(":\n", paste(utils::tail(readLines(log_file, warn = FALSE),
+                15L), collapse = "\n"))
+        }
+        stop(program, " failed (status ", status, ")", tail_log, call. = FALSE)
+    }
+    TRUE
 }
 
 # a worker's error as one plain error in the calling session
@@ -159,7 +214,8 @@ py_result <- function(x) {
 # user's own Python or declare the requirements, run the tool, report the
 # versions that were used.
 .py_run_task <- function(fun, args, requirements, python_version,
-    python = NULL) {
+    python = NULL, options = list()) {
+    options(options)
     if (!is.null(python)) {
         reticulate::use_python(python, required = TRUE)
     } else if (length(requirements) || !is.null(python_version)) {
