@@ -8,13 +8,16 @@
 #' side, and a crash in Python does not end the calling session.
 #' The first run of a set of requirements says that its environment is
 #' being installed, and how to use an own Python instead.
-#' @param fun function run in the worker with `args`. A function defined in a
-#'   package keeps that package's namespace (the worker loads the package),
-#'   so it can use the package's internal functions and imports. Any other
-#'   function must be self-contained: its environment is replaced by the
-#'   worker's global environment, so it reaches packages with `::` and gets
-#'   its data only through `args`. The calling session's `giotto.*` options
-#'   are set in the worker.
+#' @param fun function run in the worker with `args`. By default it must be
+#'   self-contained: its environment is replaced by the worker's global
+#'   environment, so it reaches packages with `::` and gets its data only
+#'   through `args`. The calling session's `giotto.*` options are set in the
+#'   worker.
+#' @param package logical. `TRUE` keeps the namespace of a `fun` defined in a
+#'   package (as for [callr::r()]): the worker loads that package, and `fun`
+#'   can use its internal functions and imports. Loading a package also loads
+#'   its dependencies; data.table's OpenMP runtime, for example, crashes
+#'   PyTorch, so tools built on PyTorch keep the default `FALSE`.
 #' @param args named list of arguments for `fun`. They are copied into the
 #'   worker; pass large data as file paths.
 #' @param requirements character. Python packages, as for
@@ -48,7 +51,7 @@
 #' @export
 py_run <- function(fun, args = list(), requirements = character(),
     python_version = NULL, isolate = getOption("giotto.py_isolate", TRUE),
-    background = FALSE, name = NULL, python = NULL,
+    background = FALSE, name = NULL, python = NULL, package = FALSE,
     verbose = FALSE) {
     checkmate::assert_function(fun)
     checkmate::assert_list(args)
@@ -59,9 +62,11 @@ py_run <- function(fun, args = list(), requirements = character(),
         stop("[py_run] reticulate >= 1.41 is needed (py_require())",
             call. = FALSE)
     }
-    # a package function keeps its namespace, which is serialized by name
-    # and loaded in the worker; other closures would drag their environment
-    if (!isNamespace(environment(fun))) environment(fun) <- globalenv()
+    # a namespace is serialized by name and loaded in the worker; any other
+    # environment would be copied along with the function
+    if (!(isTRUE(package) && isNamespace(environment(fun)))) {
+        environment(fun) <- globalenv()
+    }
     task <- .py_run_task
     environment(task) <- globalenv()
     python <- python %null% .py_user_python(name)
@@ -124,8 +129,8 @@ py_run_cli <- function(program, args = character(), requirements,
         name = name, ...)
 }
 
-# Runs in the worker: the program sits next to the worker's Python (or in
-# Scripts/ of a conda environment on Windows).
+# Runs in the worker, self-contained: the program sits next to the worker's
+# Python (or in Scripts/ of a conda environment on Windows).
 .py_cli_worker <- function(program, args, log_file = NULL) {
     bin <- dirname(reticulate::py_exe())
     exe <- if (.Platform$OS.type == "windows") paste0(program, ".exe") else
@@ -136,7 +141,7 @@ py_run_cli <- function(program, args = character(), requirements,
         stop("program '", program, "' not found next to ",
             reticulate::py_exe(), call. = FALSE)
     }
-    out <- log_file %null% ""
+    out <- if (is.null(log_file)) "" else log_file
     status <- system2(exe, shQuote(args), stdout = out, stderr = out)
     if (!identical(as.integer(status), 0L)) {
         tail_log <- if (!is.null(log_file) && file.exists(log_file)) {

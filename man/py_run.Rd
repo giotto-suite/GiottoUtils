@@ -15,6 +15,7 @@ py_run(
   background = FALSE,
   name = NULL,
   python = NULL,
+  package = FALSE,
   verbose = FALSE
 )
 
@@ -31,13 +32,11 @@ py_run_cli(
 )
 }
 \arguments{
-\item{fun}{function run in the worker with \code{args}. A function defined in a
-package keeps that package's namespace (the worker loads the package),
-so it can use the package's internal functions and imports. Any other
-function must be self-contained: its environment is replaced by the
-worker's global environment, so it reaches packages with \code{::} and gets
-its data only through \code{args}. The calling session's \verb{giotto.*} options
-are set in the worker.}
+\item{fun}{function run in the worker with \code{args}. By default it must be
+self-contained: its environment is replaced by the worker's global
+environment, so it reaches packages with \code{::} and gets its data only
+through \code{args}. The calling session's \verb{giotto.*} options are set in the
+worker.}
 
 \item{args}{named list of arguments for \code{fun}. They are copied into the
 worker; pass large data as file paths.}
@@ -63,6 +62,12 @@ instead of a uv environment (its packages are then the user's own
 responsibility). \code{NULL} (default) uses option \code{giotto.py_python}, either
 one path for every tool or a named list of paths per tool (\code{name}), and
 otherwise a uv environment.}
+
+\item{package}{logical. \code{TRUE} keeps the namespace of a \code{fun} defined in a
+package (as for \code{\link[callr:r]{callr::r()}}): the worker loads that package, and \code{fun}
+can use its internal functions and imports. Loading a package also loads
+its dependencies; data.table's OpenMP runtime, for example, crashes
+PyTorch, so tools built on PyTorch keep the default \code{FALSE}.}
 
 \item{verbose}{show the worker's output}
 

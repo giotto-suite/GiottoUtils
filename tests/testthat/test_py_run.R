@@ -50,7 +50,7 @@ test_that("py_run() runs Python in a worker and reports versions", {
         requirements = "numpy"), "not_a_module")
 })
 
-test_that("package functions keep their namespace and giotto options reach the worker", {
+test_that("package = TRUE keeps a namespace and giotto options reach the worker", {
     skip_on_cran()
     skip_if_offline()
     skip_if_not_installed("callr")
@@ -61,7 +61,8 @@ test_that("package functions keep their namespace and giotto options reach the w
         requirements = "numpy")), "a")
     # .py_first_use() calls the internal .py_used_file()
     res <- suppressMessages(py_run(.py_first_use, args = list(
-        requirements = "numpy", python_version = NULL), requirements = "numpy"))
+        requirements = "numpy", python_version = NULL), requirements = "numpy",
+        package = TRUE))
     expect_type(as.vector(res), "logical")
 })
 
