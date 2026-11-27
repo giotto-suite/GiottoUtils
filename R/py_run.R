@@ -6,6 +6,8 @@
 #' [reticulate::py_require()]. The calling session never starts Python, so
 #' tools with conflicting requirements can run in the same analysis, side by
 #' side, and a crash in Python does not end the calling session.
+#' The first run of a set of requirements says that its environment is
+#' being installed, and how to use an own Python instead.
 #' @param fun function run in the worker with `args`. It must be
 #'   self-contained: its environment is replaced by the worker's global
 #'   environment, so it reaches packages with `::` and gets its data only
@@ -60,20 +62,26 @@ py_run <- function(fun, args = list(), requirements = character(),
     targs <- list(fun = fun, args = args, requirements = requirements,
         python_version = python_version, python = python)
 
+    if (!isTRUE(isolate) && isTRUE(background)) {
+        stop("[py_run] background = TRUE needs isolate = TRUE", call. = FALSE)
+    }
+    first_use <- is.null(python) &&
+        .py_first_use(requirements, python_version, name)
+
     if (!isTRUE(isolate)) {
+        out <- do.call(task, targs)
+    } else {
+        package_check("callr", repository = "CRAN")
         if (isTRUE(background)) {
-            stop("[py_run] background = TRUE needs isolate = TRUE",
-                call. = FALSE)
+            proc <- callr::r_bg(task, args = targs, package = FALSE,
+                supervise = TRUE)
+            if (first_use) .py_mark_used(requirements, python_version)
+            return(proc)
         }
-        return(.py_run_unwrap(do.call(task, targs)))
+        out <- .py_run_rethrow(callr::r(task, args = targs, package = FALSE,
+            show = isTRUE(verbose)))
     }
-    package_check("callr", repository = "CRAN")
-    if (isTRUE(background)) {
-        return(callr::r_bg(task, args = targs, package = FALSE,
-            supervise = TRUE))
-    }
-    out <- .py_run_rethrow(callr::r(task, args = targs, package = FALSE,
-        show = isTRUE(verbose)))
+    if (first_use) .py_mark_used(requirements, python_version)
     .py_run_unwrap(out)
 }
 
@@ -92,6 +100,46 @@ py_result <- function(x) {
             conditionMessage(e)
         stop("[py_run] the Python worker failed: ", msg, call. = FALSE)
     })
+}
+
+# First use of a set of requirements on this machine: say that its
+# environment is being installed, and how to use an own Python instead.
+# Recorded per set of requirements in the user cache directory.
+.py_used_file <- function(requirements, python_version) {
+    key <- paste(c(sort(requirements), python_version), collapse = " ")
+    f <- tempfile()
+    on.exit(unlink(f))
+    writeLines(key, f)
+    file.path(tools::R_user_dir("GiottoUtils", "cache"), "py_run",
+        unname(tools::md5sum(f)))
+}
+
+.py_first_use <- function(requirements, python_version, name = NULL) {
+    if (!length(requirements) && is.null(python_version)) return(FALSE)
+    used <- tryCatch(file.exists(.py_used_file(requirements, python_version)),
+        error = function(e) TRUE)
+    if (used) return(FALSE)
+    tool <- name %null% paste(requirements, collapse = ", ")
+    own <- if (is.null(name)) {
+        "options(giotto.py_python = \"/path/to/python\")"
+    } else {
+        sprintf("options(giotto.py_python = list(%s = \"/path/to/python\"))",
+            if (make.names(name) == name) name else sprintf("`%s`", name))
+    }
+    message(sprintf(paste0(
+        "Installing the Python environment for %s (first use only).\n",
+        "This needs internet and can take a few minutes; later runs reuse it.\n",
+        "To use your own Python installation instead:\n  %s"), tool, own))
+    TRUE
+}
+
+.py_mark_used <- function(requirements, python_version) {
+    try({
+        f <- .py_used_file(requirements, python_version)
+        dir.create(dirname(f), recursive = TRUE, showWarnings = FALSE)
+        writeLines(paste(requirements, collapse = "\n"), f)
+    }, silent = TRUE)
+    invisible()
 }
 
 # The user's own Python for a tool, from option giotto.py_python: one path,

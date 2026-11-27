@@ -64,6 +64,8 @@ holds \code{requirements}, built and cached by uv through
 \code{\link[reticulate:py_require]{reticulate::py_require()}}. The calling session never starts Python, so
 tools with conflicting requirements can run in the same analysis, side by
 side, and a crash in Python does not end the calling session.
+The first run of a set of requirements says that its environment is
+being installed, and how to use an own Python instead.
 }
 \examples{
 \dontrun{

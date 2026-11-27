@@ -19,6 +19,19 @@ test_that("an own Python is found per tool or for all tools", {
     expect_null(.py_user_python())
 })
 
+test_that("the first use of a set of requirements is announced once", {
+    old <- Sys.getenv("R_USER_CACHE_DIR")
+    on.exit(Sys.setenv(R_USER_CACHE_DIR = old), add = TRUE)
+    Sys.setenv(R_USER_CACHE_DIR = tempfile())
+    expect_message(first <- .py_first_use("scrublet", NULL, "scrublet"),
+        "giotto.py_python = list\\(scrublet")
+    expect_true(first)
+    .py_mark_used("scrublet", NULL)
+    expect_false(.py_first_use("scrublet", NULL, "scrublet"))
+    expect_message(.py_first_use("scrublet", "3.11", NULL), "/path/to/python")
+    expect_false(.py_first_use(character(), NULL))
+})
+
 test_that("py_run() runs Python in a worker and reports versions", {
     skip_on_cran()
     skip_if_offline()
