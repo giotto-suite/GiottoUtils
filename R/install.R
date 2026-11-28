@@ -17,7 +17,10 @@ suite_packages <- function(type = "core") {
     type <- match.arg(type, c("core", "extensions", "all"))
     suite_pkgs <- list(
         "core" = c("GiottoUtils", "GiottoClass", "GiottoVisuals", "Giotto"),
-        "extensions" = c("GiottoData", "GiottoDB", "GiottoDisk", "GiottoLens")
+        "extensions" = c(
+            "GiottoData", "GiottoDB", "GiottoDisk", "GiottoConnect",
+            "GiottoLens"
+        )
     )
     switch(type,
         "core" = suite_pkgs$core,
@@ -65,18 +68,19 @@ suite_packages <- function(type = "core") {
 #' version.
 #' @section ref `"disk"`, `giottodisk`, or `gsource`:
 #' The on-disk build set. Installs the `gsource` branches that *GiottoDisk*
-#' builds against, *GiottoDisk* itself from its `dev` integration branch, and
-#' *GiottoLens* from its default branch. This is the only ref *GiottoDisk* and
-#' *GiottoLens* are compatible with, so requesting either with any other ref
-#' switches to this one.\cr
+#' builds against, *GiottoDisk* and *GiottoConnect* from their `dev` branches,
+#' and *GiottoLens* from its default branch. This is the only ref *GiottoDisk*,
+#' *GiottoConnect* and *GiottoLens* are compatible with, so requesting any of
+#' them with another ref switches to this one.\cr
 #' *GiottoData* and *GiottoDB* have no `gsource` branch and install from their
 #' default branch. Neither is part of the *GiottoDisk* dependency chain, so
 #' they are only installed when asked for by name.
 #' @section ref `"disk_full"`:
 #' The whole on-disk pipeline, from the same branches as `"disk"`. Adds
-#' *GiottoDisk*, *GiottoLens* and the optional packages that speed up or extend
-#' it (*GiottoKernels*, *GiottoIngest*, *smotif*, *smotifrs*, *cosmxscan*,
-#' *spatialDWLS* and *sedonadb*) to `modules`.
+#' *GiottoData*, *GiottoDisk*, *GiottoConnect*, *GiottoLens* and the optional
+#' packages that speed up or extend it (*GiottoKernels*, *GiottoIngest*,
+#' *smotif*, *smotifrs*, *edgeicg*, *edgeicgrs*, *cosmxscan*, *spatialDWLS* and
+#' *sedonadb*) to `modules`. This is everything the Giotto Suite tutorials use.
 #' @section Non-suite packages:
 #' *arrow*, *tilework* and the optional packages listed under `"disk_full"` can
 #' be requested as `modules` under any ref. With `suite_deps = TRUE`, *arrow*
@@ -122,8 +126,8 @@ suite_install <- function(
         ref <- "disk"
     }
 
-    # GiottoDisk and GiottoLens only build against the disk ref
-    disk_only <- intersect(c("GiottoDisk", "GiottoLens"), modules)
+    # GiottoDisk, GiottoConnect and GiottoLens only build against the disk ref
+    disk_only <- intersect(c("GiottoDisk", "GiottoConnect", "GiottoLens"), modules)
     if (length(disk_only) && !identical(ref, "disk")) {
         vmsg(sprintf(
             "%s requested. Switching to the \"disk\" ref",
@@ -156,7 +160,7 @@ suite_install <- function(
             }
         } else if ("GiottoVisuals" %in% modules) {
             modules <- c("GiottoVisuals", "GiottoClass", "GiottoUtils", modules)
-        } else if ("GiottoData" %in% modules) {
+        } else if (any(c("GiottoData", "GiottoConnect") %in% modules)) {
             modules <- c("GiottoClass", "GiottoUtils", modules)
         } else if ("GiottoDB" %in% modules) {
             modules <- c("GiottoClass", "GiottoUtils", modules)
@@ -260,6 +264,8 @@ suite_install <- function(
     GiottoIngest = "r-universe:giotto-suite/GiottoIngest",
     smotifrs = "r-universe:drieslab/smotifrs",
     smotif = "r-universe:drieslab/smotif",
+    edgeicgrs = "r-universe:drieslab/edgeicgrs",
+    edgeicg = "r-universe:drieslab/edgeicg",
     cosmxscan = "r-universe:drieslab/cosmxscan",
     spatialDWLS = "r-universe:drieslab/spatialDWLS",
     sedonadb = "r-universe:apache/sedonadb"
@@ -267,8 +273,9 @@ suite_install <- function(
 
 # added to `modules` by ref = "disk_full"
 .disk_full_modules <- c(
-    "GiottoDisk", "GiottoLens", "GiottoKernels", "GiottoIngest", "smotifrs",
-    "smotif", "cosmxscan", "spatialDWLS", "sedonadb"
+    "GiottoData", "GiottoDisk", "GiottoConnect", "GiottoLens", "GiottoKernels",
+    "GiottoIngest", "smotifrs", "smotif", "edgeicgrs", "edgeicg", "cosmxscan",
+    "spatialDWLS", "sedonadb"
 )
 
 .mainrefs <- c(
@@ -299,6 +306,7 @@ suite_install <- function(
     GiottoData = "giotto-suite/GiottoData", # no gsource branch
     GiottoDB = "giotto-suite/GiottoDB", # no gsource branch
     GiottoDisk = "giotto-suite/GiottoDisk@dev",
+    GiottoConnect = "giotto-suite/GiottoConnect@dev",
     GiottoLens = "giotto-suite/GiottoLens"
 )
 
@@ -333,10 +341,13 @@ suite_install <- function(
     "GiottoIngest",
     "smotifrs",
     "smotif",
+    "edgeicgrs",
+    "edgeicg",
     "cosmxscan",
     "spatialDWLS",
     "sedonadb",
     "GiottoDisk",
+    "GiottoConnect",
     "GiottoLens"
 )
 

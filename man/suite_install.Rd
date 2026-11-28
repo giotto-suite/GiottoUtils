@@ -74,10 +74,10 @@ version.
 \section{ref \code{"disk"}, \code{giottodisk}, or \code{gsource}}{
 
 The on-disk build set. Installs the \code{gsource} branches that \emph{GiottoDisk}
-builds against, \emph{GiottoDisk} itself from its \code{dev} integration branch, and
-\emph{GiottoLens} from its default branch. This is the only ref \emph{GiottoDisk} and
-\emph{GiottoLens} are compatible with, so requesting either with any other ref
-switches to this one.\cr
+builds against, \emph{GiottoDisk} and \emph{GiottoConnect} from their \code{dev} branches,
+and \emph{GiottoLens} from its default branch. This is the only ref \emph{GiottoDisk},
+\emph{GiottoConnect} and \emph{GiottoLens} are compatible with, so requesting any of
+them with another ref switches to this one.\cr
 \emph{GiottoData} and \emph{GiottoDB} have no \code{gsource} branch and install from their
 default branch. Neither is part of the \emph{GiottoDisk} dependency chain, so
 they are only installed when asked for by name.
@@ -86,9 +86,10 @@ they are only installed when asked for by name.
 \section{ref \code{"disk_full"}}{
 
 The whole on-disk pipeline, from the same branches as \code{"disk"}. Adds
-\emph{GiottoDisk}, \emph{GiottoLens} and the optional packages that speed up or extend
-it (\emph{GiottoKernels}, \emph{GiottoIngest}, \emph{smotif}, \emph{smotifrs}, \emph{cosmxscan},
-\emph{spatialDWLS} and \emph{sedonadb}) to \code{modules}.
+\emph{GiottoData}, \emph{GiottoDisk}, \emph{GiottoConnect}, \emph{GiottoLens} and the optional
+packages that speed up or extend it (\emph{GiottoKernels}, \emph{GiottoIngest},
+\emph{smotif}, \emph{smotifrs}, \emph{edgeicg}, \emph{edgeicgrs}, \emph{cosmxscan}, \emph{spatialDWLS} and
+\emph{sedonadb}) to \code{modules}. This is everything the Giotto Suite tutorials use.
 }
 
 \section{Non-suite packages}{
