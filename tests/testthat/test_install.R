@@ -126,11 +126,12 @@ test_that("disk_full installs the pipeline from the disk branches", {
     installs <- grep("install_github|install\\.packages", msgs, value = TRUE)
     github <- c(
         "GiottoUtils@dev", "GiottoClass@gsource", "GiottoVisuals@gsource",
-        "Giotto@gsource", "GiottoDisk@dev", "giotto-suite/GiottoLens,"
+        "Giotto@gsource", "giotto-suite/GiottoData,", "GiottoDisk@dev",
+        "GiottoConnect@dev", "giotto-suite/GiottoLens,"
     )
     runiverse <- c(
         "tilework", "GiottoKernels", "GiottoIngest", "smotifrs", "smotif",
-        "cosmxscan", "spatialDWLS", "sedonadb"
+        "edgeicgrs", "edgeicg", "cosmxscan", "spatialDWLS", "sedonadb"
     )
     for (x in github) {
         expect_true(any(grepl(x, installs, fixed = TRUE)), info = x)
@@ -153,6 +154,26 @@ test_that("disk_full installs the pipeline from the disk branches", {
                 install_arrow = FALSE)
         ),
         msgs
+    )
+})
+
+test_that("GiottoConnect switches to the disk ref and installs after GiottoDisk", {
+    msgs <- capture_messages(
+        suite_install("GiottoConnect", ref = "main", dry_run = TRUE)
+    )
+    expect_match(msgs[1], "GiottoConnect requested. Switching")
+    installs <- grep("install_github", msgs, value = TRUE)
+    expect_match(installs[1], "GiottoUtils@dev")
+    expect_match(installs[2], "GiottoClass@gsource")
+    expect_match(installs[length(installs)], "GiottoConnect@dev")
+    msgs <- capture_messages(
+        suite_install(ref = "disk_full", dry_run = TRUE, install_arrow = FALSE)
+    )
+    expect_lt(
+        grep("GiottoDisk@dev", msgs), grep("GiottoConnect@dev", msgs)
+    )
+    expect_lt(
+        grep("\"edgeicgrs\"", msgs), grep("\"edgeicg\"", msgs)
     )
 })
 
